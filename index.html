@@ -1,0 +1,3022 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>UCB Digital Training</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+}
+*[onclick], button, a, input, textarea, select, label{
+  cursor:pointer;
+  touch-action:manipulation;
+}
+:root{
+  --navy:#001489;--navy2:#002580;--navy-dark:#000f5e;
+  --teal:#00A79D;--teal-soft:#e0f5f4;--teal-dark:#007a72;
+  --silver:#f4f5f8;--mid:#e8eaf0;--line:#e2e5ec;
+  --ink:#10132b;--ink2:#2a2e4a;--muted:#6b7280;--muted2:#9ca3af;
+  --white:#fff;--success:#00875a;--warn:#e8900a;--error:#d63031;
+}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#000;
+  margin:0;padding:0;overflow:hidden;
+  width:100vw;height:100vh;height:100dvh;
+}
+
+/* ── DEVICE ── */
+.device{
+  width:100vw;height:100vh;height:100dvh;
+  background:#fff;
+  border-radius:0;overflow:hidden;
+  position:relative;
+}
+.notch{ display:none; }
+.home-indicator{ display:none; }
+
+/* ── SCREENS ── */
+.screen{
+  position:absolute;inset:0;overflow:hidden;
+  transition:transform .38s cubic-bezier(.4,0,.2,1),opacity .38s;
+}
+.screen.off-right{transform:translateX(100%);opacity:0;pointer-events:none;}
+.screen.off-left{transform:translateX(-25%);opacity:0;pointer-events:none;}
+
+/* ── STATUS BAR ── */
+.sbar{
+  height:50px;display:flex;align-items:flex-end;
+  justify-content:space-between;padding:0 28px 10px;
+  position:absolute;top:0;left:0;right:0;z-index:50;
+}
+.sbar-time{font-size:15px;font-weight:700;}
+.sbar-icons{display:flex;align-items:center;gap:6px;}
+
+/* ── STATUS BARS SVG SETS ── */
+.sb-dark .sbar{color:var(--ink);}
+.sb-light .sbar{color:white;}
+
+/* ── APP HEADER (navy gradient, reusable) ── */
+.app-header{
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy2) 100%);
+  padding-top:50px;
+  padding-top:max(env(safe-area-inset-top,0px), 16px);
+  padding-left:20px;padding-right:20px;padding-bottom:14px;
+  position:absolute;top:0;left:0;right:0;z-index:30;
+}
+.app-header-row{
+  display:flex;align-items:center;min-height:44px;
+}
+.app-header-side{min-width:72px;display:flex;align-items:center;}
+.app-header-right{justify-content:flex-end;gap:4px;}
+.app-header-center{flex:1;text-align:center;}
+.app-header-title{font-size:17px;font-weight:600;color:white;letter-spacing:.1px;}
+.app-header-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:1px;}
+.hbtn{
+  width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:50%;transition:background .15s;position:relative;
+}
+.hbtn:hover{background:rgba(255,255,255,.1);}
+.nbadge-sm{
+  position:absolute;top:5px;right:5px;
+  min-width:16px;height:16px;border-radius:8px;
+  background:var(--error);border:1.5px solid var(--navy);
+  display:flex;align-items:center;justify-content:center;
+}
+.nbadge-sm span{font-size:9px;font-weight:700;color:white;}
+
+/* ── SCROLLABLE BODY ── */
+.s-body{
+  position:absolute;left:0;right:0;bottom:0;
+  overflow-y:auto;
+}
+.s-body::-webkit-scrollbar{display:none;}
+
+/* ── FILTER CHIPS ROW ── */
+.filter-row{
+  background:white;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:8px;
+  padding:10px 20px;overflow-x:auto;
+}
+.filter-row::-webkit-scrollbar{display:none;}
+.fchip{
+  padding:6px 14px;border-radius:9999px;border:1px solid var(--line);
+  background:var(--silver);font-size:13px;font-weight:500;color:var(--muted);
+  cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;
+}
+.fchip:hover{border-color:var(--navy);}
+.fchip.active{background:var(--navy);border-color:var(--navy);color:white;}
+
+/* ─────────────────────────────────────────────────
+   1. LOGIN
+───────────────────────────────────────────────── */
+#s-login{
+  background:linear-gradient(165deg,var(--navy) 0%,var(--navy2) 55%,var(--navy-dark) 100%);
+}
+#s-login .sbar{color:white;}
+.login-circle{
+  position:absolute;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.06);pointer-events:none;
+}
+.login-body{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:60px 28px 48px;gap:40px;
+}
+.login-logo-area{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.login-logo-badge{
+  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);
+  border-radius:14px;padding:12px 22px;
+  font-size:20px;font-weight:700;color:white;letter-spacing:2px;
+}
+.login-logo-name{font-size:16px;font-weight:600;color:white;}
+.login-logo-tagline{font-size:12px;color:rgba(255,255,255,.5);}
+.login-form{width:100%;display:flex;flex-direction:column;gap:14px;}
+.login-input-row{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:8px;padding:0 16px;height:52px;
+}
+.login-input-row input{
+  flex:1;border:none;outline:none;background:transparent;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:white;
+}
+.login-input-row input::placeholder{color:rgba(255,255,255,.5);}
+.btn-teal{
+  width:100%;height:52px;background:var(--teal);color:white;border:none;
+  border-radius:8px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;
+  cursor:pointer;transition:background .2s;margin-top:4px;
+}
+.btn-teal:hover{background:var(--teal-dark);}
+.login-forgot{text-align:center;font-size:14px;color:rgba(255,255,255,.65);cursor:pointer;padding:8px 0;}
+.login-forgot:hover{color:rgba(255,255,255,.9);}
+
+/* ─────────────────────────────────────────────────
+   2. FORGOT PASSWORD
+───────────────────────────────────────────────── */
+#s-forgot{
+  background:linear-gradient(165deg,var(--navy) 0%,var(--navy2) 55%,var(--navy-dark) 100%);
+}
+#s-forgot .sbar{color:white;}
+
+/* ─────────────────────────────────────────────────
+   3. HOME
+───────────────────────────────────────────────── */
+#s-home{background:var(--silver);}
+.home-header{
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy2) 100%);
+  padding:50px 20px 14px;
+  position:absolute;top:0;left:0;right:0;z-index:10;
+}
+.home-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.home-logo{display:flex;align-items:center;gap:6px;}
+.home-logo-text{font-size:15px;font-weight:700;color:white;letter-spacing:1px;}
+.home-logo-dot{width:5px;height:5px;background:var(--teal);border-radius:50%;}
+.home-actions{display:flex;align-items:center;gap:2px;}
+.home-search{
+  display:flex;align-items:center;gap:8px;
+  background:white;border-radius:8px;padding:0 14px;height:44px;margin-bottom:10px;
+}
+.home-search input{
+  flex:1;border:none;outline:none;font-family:'DM Sans',sans-serif;
+  font-size:14px;color:var(--muted);
+}
+.home-filter-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+  border-radius:9999px;padding:6px 16px;color:white;
+  font-size:13px;font-weight:600;cursor:pointer;
+}
+
+/* TimelineCard — big 16:9 card with overlay */
+.tl-card{
+  border-radius:12px;overflow:hidden;cursor:pointer;flex-shrink:0;
+  background:var(--navy-dark);
+  transition:opacity .15s;
+}
+.tl-card:hover{opacity:.92;}
+.tl-card-inner{position:relative;width:100%;aspect-ratio:16/9;}
+.tl-card-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
+.tl-card-gradient{
+  position:absolute;bottom:0;left:0;right:0;height:70%;
+  background:linear-gradient(to bottom,transparent,rgba(0,0,0,.75));
+}
+.tl-card-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:14px 16px;gap:12px;
+}
+.tl-card-text{flex:1;}
+.tl-card-title{font-size:16px;font-weight:600;color:white;line-height:1.35;margin-bottom:2px;}
+.tl-card-meta{font-size:12px;color:rgba(255,255,255,.75);}
+.tl-play-btn{
+  width:44px;height:44px;border-radius:22px;background:var(--teal);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.tl-play-btn.done{background:var(--success);}
+.tl-progress{height:3px;background:rgba(255,255,255,.2);position:absolute;bottom:0;left:0;right:0;}
+.tl-progress-fill{height:3px;background:var(--teal);}
+
+/* ─────────────────────────────────────────────────
+   4. TRAINING DETAIL
+───────────────────────────────────────────────── */
+#s-training{background:var(--silver);}
+.td-subheader{
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy2) 100%);
+  padding:14px 20px 70px;position:relative;overflow:hidden;
+}
+.td-author{font-size:13px;color:rgba(255,255,255,.8);}
+.td-author strong{color:white;font-weight:600;}
+.td-particle{position:absolute;border-radius:50%;background:var(--teal);opacity:.5;}
+.td-video-card-wrap{margin-top:-56px;padding:0 20px;}
+.td-video-card{
+  border-radius:12px;overflow:hidden;background:#000;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.td-video-thumb{aspect-ratio:16/9;position:relative;background:var(--navy-dark);}
+.td-video-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.6));}
+.td-video-play{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:52px;height:52px;border-radius:26px;
+  background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+}
+.td-player-bar{
+  background:#1a1a2e;padding:8px 14px 10px;
+}
+.td-player-progress{
+  height:2px;background:rgba(255,255,255,.25);border-radius:1px;margin-bottom:8px;position:relative;
+}
+.td-player-fill{height:2px;background:var(--teal);border-radius:1px;width:30%;}
+.td-player-thumb{
+  position:absolute;top:-4px;left:calc(30% - 5px);
+  width:10px;height:10px;border-radius:5px;background:var(--teal);
+}
+.td-player-controls{display:flex;align-items:center;gap:10px;}
+.td-player-time{font-size:11px;color:rgba(255,255,255,.8);letter-spacing:.3px;}
+.td-content{background:white;margin-top:14px;}
+.td-desc{padding:20px;font-size:15px;color:var(--ink2);line-height:1.65;}
+.td-ver-mais{font-size:13px;font-weight:500;color:var(--teal);margin-top:8px;cursor:pointer;}
+.td-sep{height:1px;background:var(--line);margin:0 20px;}
+.td-attach{padding:20px;display:flex;flex-direction:column;gap:10px;}
+.td-attach-label{font-size:14px;color:var(--ink2);}
+.td-attach-row{display:flex;align-items:center;gap:12px;cursor:pointer;}
+.td-pdf-icon{
+  width:44px;height:52px;border-radius:6px;background:#fff3f3;
+  border:1px solid #ffd5d5;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;flex-shrink:0;
+}
+.td-pdf-label{font-size:9px;font-weight:700;color:var(--error);letter-spacing:.5px;}
+.td-attach-name{font-size:14px;font-weight:500;color:var(--navy);text-decoration:underline;}
+.td-footer{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:12px 20px 24px;background:white;
+  border-top:1px solid var(--line);
+}
+.btn-responder{
+  width:100%;height:52px;background:var(--teal);color:white;border:none;
+  border-radius:8px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-responder:hover{background:var(--teal-dark);}
+
+/* ─────────────────────────────────────────────────
+   5. COACHING
+───────────────────────────────────────────────── */
+#s-coaching{background:var(--silver);}
+.coaching-card{
+  background:white;border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;display:flex;flex-direction:column;gap:8px;
+  cursor:pointer;transition:opacity .15s;
+}
+.coaching-card:hover{opacity:.9;}
+.coaching-card-header{display:flex;align-items:center;justify-content:space-between;}
+.coaching-card-header-left{display:flex;align-items:center;gap:8px;}
+.bu-chip{
+  background:var(--teal-soft);border-radius:9999px;
+  padding:3px 10px;font-size:11px;font-weight:600;color:var(--teal-dark);
+}
+.tag{
+  display:inline-block;padding:3px 9px;border-radius:9999px;
+  font-size:11px;font-weight:600;
+}
+.tag-warning{background:#fff3e0;color:var(--warn);}
+.tag-success{background:#e6f7f0;color:var(--success);}
+.tag-muted{background:var(--mid);color:var(--muted);}
+.tag-navy{background:#e8edf9;color:var(--navy);}
+.coaching-deadline{font-size:12px;color:var(--muted);}
+.coaching-card-title{font-size:15px;font-weight:600;color:var(--ink);}
+.coaching-card-desc{font-size:13px;color:var(--muted);line-height:1.4;}
+.coaching-card-footer{display:flex;align-items:center;justify-content:space-between;}
+.coaching-card-meta{font-size:12px;color:var(--muted);}
+
+/* ─────────────────────────────────────────────────
+   6. MESSAGES
+───────────────────────────────────────────────── */
+#s-messages{background:white;}
+.msg-search{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 20px;border-bottom:1px solid var(--line);
+}
+.msg-search input{
+  flex:1;border:none;outline:none;font-family:'DM Sans',sans-serif;
+  font-size:14px;color:var(--ink);
+}
+.msg-search input::placeholder{color:var(--muted);}
+.conv-row{
+  display:flex;align-items:center;padding:12px 20px;gap:12px;
+  cursor:pointer;min-height:72px;transition:background .15s;
+}
+.conv-row:hover{background:var(--silver);}
+.conv-row + .conv-row{border-top:1px solid var(--line);}
+.avatar{
+  width:44px;height:44px;border-radius:22px;
+  background:var(--navy);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.avatar span{font-size:15px;font-weight:600;color:white;}
+.avatar-teal{background:var(--teal);}
+.avatar-sm{width:36px;height:36px;border-radius:18px;}
+.avatar-sm span{font-size:13px;}
+.conv-body{flex:1;min-width:0;}
+.conv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px;}
+.conv-name{font-size:15px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.conv-name.unread{font-weight:600;}
+.conv-time{font-size:12px;color:var(--muted);flex-shrink:0;}
+.conv-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.conv-preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.conv-preview.unread{color:var(--ink2);font-weight:500;}
+.unread-badge{
+  min-width:20px;height:20px;border-radius:9999px;background:var(--teal);
+  display:flex;align-items:center;justify-content:center;padding:0 5px;flex-shrink:0;
+}
+.unread-badge span{font-size:11px;font-weight:700;color:white;}
+.compose-btn{
+  width:36px;height:36px;border-radius:18px;
+  background:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+
+/* ─────────────────────────────────────────────────
+   7. CHAT
+───────────────────────────────────────────────── */
+#s-chat{background:var(--silver);}
+.chat-body{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+.chat-bubble-wrap{display:flex;align-items:flex-end;gap:8px;}
+.chat-bubble-wrap.mine{flex-direction:row-reverse;}
+.chat-bubble{
+  max-width:72%;padding:10px 14px;border-radius:16px;
+  font-size:14px;line-height:1.45;
+}
+.chat-bubble.theirs{background:white;color:var(--ink);border-bottom-left-radius:4px;border:1px solid var(--line);}
+.chat-bubble.mine{background:var(--navy);color:white;border-bottom-right-radius:4px;}
+.chat-bubble-time{font-size:11px;color:var(--muted);margin-top:2px;text-align:right;}
+.chat-bubble-time.mine{color:rgba(255,255,255,.6);}
+.chat-input-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:10px 16px 24px;background:white;border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;
+}
+.chat-input{
+  flex:1;border:1px solid var(--line);border-radius:20px;
+  padding:9px 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);
+  outline:none;
+}
+.chat-send{
+  width:38px;height:38px;border-radius:19px;background:var(--teal);border:none;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
+}
+
+/* ─────────────────────────────────────────────────
+   8. NOTIFICATIONS
+───────────────────────────────────────────────── */
+#s-notifications{background:white;}
+.notif-row{
+  display:flex;align-items:flex-start;padding:14px 20px;gap:12px;
+  cursor:pointer;transition:background .15s;
+}
+.notif-row:hover{opacity:.9;}
+.notif-row.unread{background:#f7f8ff;}
+.notif-row + .notif-row{border-top:1px solid var(--line);}
+.notif-icon{
+  width:44px;height:44px;border-radius:22px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.notif-icon-teal{background:var(--teal-soft);}
+.notif-icon-warn{background:#fff3e0;}
+.notif-icon-error{background:#fdecea;}
+.notif-icon-success{background:#e6f7f0;}
+.notif-icon-navy{background:#e8edf9;}
+.notif-body{flex:1;}
+.notif-title{font-size:14px;color:var(--ink2);line-height:1.4;}
+.notif-title.unread{font-weight:600;color:var(--ink);}
+.notif-sub{font-size:13px;color:var(--muted);line-height:1.4;margin-top:2px;}
+.notif-time{font-size:12px;color:var(--muted2);margin-top:3px;}
+.notif-dot{
+  width:8px;height:8px;border-radius:4px;background:var(--navy);
+  margin-top:5px;flex-shrink:0;
+}
+
+/* ─────────────────────────────────────────────────
+   9. PROFILE
+───────────────────────────────────────────────── */
+#s-profile{background:var(--silver);}
+.profile-hero{
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy2) 100%);
+  padding:0 20px 32px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding-top:20px;
+}
+.profile-avatar{
+  width:80px;height:80px;border-radius:40px;
+  background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+}
+.profile-avatar span{font-size:28px;font-weight:700;color:white;}
+.profile-name{font-size:20px;font-weight:600;color:white;margin-top:4px;}
+.profile-role{font-size:13px;color:var(--teal);}
+.profile-edit-btn{
+  display:flex;align-items:center;gap:6px;margin-top:10px;
+  padding:7px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.1);cursor:pointer;
+  font-size:13px;font-weight:500;color:white;
+}
+.profile-section{padding:20px 20px 0;}
+.profile-section-label{
+  font-size:10px;font-weight:600;color:var(--muted);
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px;
+}
+.profile-card{
+  background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+}
+.profile-cert-row{display:flex;align-items:flex-start;padding:14px 16px;gap:12px;}
+.profile-cert-badge{
+  width:40px;height:48px;background:var(--teal-soft);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.profile-cert-badge span{font-size:10px;font-weight:700;color:var(--teal-dark);letter-spacing:.5px;}
+.profile-cert-info{flex:1;}
+.profile-cert-title{font-size:14px;font-weight:500;color:var(--ink);line-height:1.4;margin-bottom:2px;}
+.profile-cert-meta{font-size:12px;color:var(--muted);}
+.profile-cert-actions{display:flex;gap:16px;margin-top:4px;}
+.profile-cert-action{font-size:12px;font-weight:500;color:var(--teal);cursor:pointer;}
+.profile-account-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+}
+.profile-account-row:hover{background:var(--silver);}
+.profile-account-text{font-size:15px;color:var(--ink);}
+
+/* ── DRAWER ── */
+.drawer-screen{background:rgba(0,0,0,.45);}
+.drawer-panel{
+  position:absolute;top:0;left:0;right:0;
+  background:linear-gradient(175deg,var(--navy) 0%,#003082 60%,var(--navy-dark) 100%);
+  border-bottom-left-radius:24px;border-bottom-right-radius:24px;
+  overflow:hidden;z-index:10;
+  padding-bottom:20px;
+}
+.drawer-ring{
+  position:absolute;border-radius:50%;
+  border:1px solid rgba(255,255,255,.07);pointer-events:none;
+}
+.drawer-inner{padding:52px 20px 0;}
+.drawer-logo-row{padding-bottom:20px;}
+.drawer-logo-text{font-size:14px;font-weight:700;color:white;letter-spacing:1px;display:flex;align-items:center;gap:6px;}
+.drawer-logo-dot{width:5px;height:5px;background:var(--teal);border-radius:50%;}
+.drawer-profile{display:flex;flex-direction:column;align-items:center;gap:4px;padding-bottom:20px;}
+.drawer-avatar-wrap{
+  width:76px;height:76px;border-radius:38px;
+  background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;margin-bottom:8px;
+}
+.drawer-avatar-wrap span{font-size:30px;font-weight:700;color:white;}
+.drawer-user-name{font-size:17px;font-weight:600;color:white;text-align:center;}
+.drawer-user-role{font-size:13px;color:var(--teal);margin-top:2px;}
+.drawer-edit-btn{
+  display:flex;align-items:center;gap:5px;margin-top:10px;
+  padding:6px 12px;border-radius:9999px;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);
+  font-size:12px;font-weight:500;color:rgba(255,255,255,.7);cursor:pointer;
+}
+.drawer-divider{height:1px;background:rgba(255,255,255,.1);margin:10px 0;}
+.drawer-menu-section{padding:0 8px;}
+.drawer-item{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 16px;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.drawer-item:hover{background:rgba(255,255,255,.05);}
+.drawer-item.active{background:rgba(255,255,255,.08);}
+.drawer-item-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.drawer-item-label{font-size:15px;color:rgba(255,255,255,.82);}
+.drawer-item.active .drawer-item-label{font-weight:600;color:white;}
+
+/* ── ACTION SHEET (iOS style) ── */
+.action-sheet-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.45);
+  z-index:100;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:8px 8px 24px;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.action-sheet-overlay.open{opacity:1;pointer-events:all;}
+.action-sheet{
+  background:transparent;display:flex;flex-direction:column;gap:8px;
+  transform:translateY(40px);transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.action-sheet-overlay.open .action-sheet{transform:translateY(0);}
+.action-sheet-group{
+  background:rgba(255,255,255,.97);border-radius:14px;overflow:hidden;
+  backdrop-filter:blur(20px);
+}
+.action-sheet-title{
+  text-align:center;padding:14px 16px 10px;
+  font-size:13px;color:var(--muted);border-bottom:1px solid var(--line);
+}
+.action-sheet-btn{
+  width:100%;padding:16px;border:none;background:transparent;
+  font-family:'DM Sans',sans-serif;font-size:17px;
+  cursor:pointer;border-bottom:1px solid rgba(0,0,0,.08);
+  transition:background .15s;
+}
+.action-sheet-btn:last-child{border-bottom:none;}
+.action-sheet-btn:active{background:rgba(0,0,0,.05);}
+.action-sheet-btn.danger{color:var(--error);}
+.action-sheet-btn.primary{color:#007aff;font-weight:600;}
+.action-sheet-cancel{
+  background:rgba(255,255,255,.97);border-radius:14px;
+  width:100%;padding:16px;border:none;
+  font-family:'DM Sans',sans-serif;font-size:17px;font-weight:600;
+  color:#007aff;cursor:pointer;backdrop-filter:blur(20px);
+  transition:background .15s;
+}
+.action-sheet-cancel:active{background:rgba(255,255,255,.85);}
+
+/* ── SLIDER DE TEMPO ── */
+.time-slider-wrap{position:relative;padding-top:32px;}
+.time-slider-tooltip{
+  position:absolute;top:0;
+  background:var(--navy);color:white;
+  font-size:12px;font-weight:700;
+  padding:3px 9px;border-radius:6px;
+  white-space:nowrap;transform:translateX(-50%);
+  pointer-events:none;transition:left .05s;
+}
+.time-slider-tooltip::after{
+  content:'';position:absolute;bottom:-5px;left:50%;
+  transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--navy);border-bottom:none;
+}
+input[type=range].time-slider{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:4px;border-radius:2px;
+  background:var(--line);outline:none;cursor:pointer;
+}
+input[type=range].time-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:20px;height:20px;border-radius:50%;
+  background:white;border:2.5px solid var(--navy);
+  box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:pointer;
+}
+input[type=range].time-slider::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  background:white;border:2.5px solid var(--navy);
+  box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:pointer;
+}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  color:white;max-width:260px;
+  display:flex;flex-direction:column;gap:24px;
+}
+.sidebar h1{font-size:26px;font-weight:700;line-height:1.2;color:white;}
+.sidebar p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6;}
+.nav-pills{display:flex;flex-direction:column;gap:6px;}
+.nav-pill{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;border-radius:10px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.08);transition:all .2s;
+}
+.nav-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);}
+.nav-pill.active{background:rgba(0,167,157,.15);border-color:var(--teal);}
+.pill-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0;}
+.nav-pill.active .pill-dot{background:var(--teal);}
+.pill-label{font-size:13px;font-weight:500;color:rgba(255,255,255,.7);}
+.nav-pill.active .pill-label{color:white;}
+
+/* ── MOBILE OVERRIDES ── */
+.s-body, .filter-row, textarea, input{
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+/* iOS: garante que divs com onclick respondem ao toque */
+[onclick]{
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  user-select:none;
+  -webkit-user-select:none;
+}
+/* Remove delay de 300ms em toda a página */
+html{
+  touch-action:manipulation;
+}
+.sbar{ display:none; }
+.sidebar{ display:none !important; }
+#toggle-sidebar{ display:none !important; }
+.app-header{ padding-top:env(safe-area-inset-top, 12px) !important; padding-top:max(env(safe-area-inset-top,0px), 12px) !important; }
+#s-login .login-body{ padding-top:calc(env(safe-area-inset-top,0px) + 60px); }
+#s-role > div[style*="position:absolute"]{ padding-top:calc(env(safe-area-inset-top,0px) + 60px) !important; }
+.s-body{ bottom:env(safe-area-inset-bottom,0px) !important; }
+.td-footer, .chat-input-bar, [style*="bottom:0"][style*="padding:12px 20px"]{ padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px) !important; }
+.sidebar{transition:opacity .3s, transform .3s, max-width .3s;}
+.sidebar.hidden{opacity:0;pointer-events:none;transform:translateX(-20px);max-width:0;overflow:hidden;}
+#toggle-sidebar{
+  position:fixed;bottom:32px;left:20px;z-index:999;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+  border-radius:20px;padding:8px 14px;
+  cursor:pointer;transition:background .2s;backdrop-filter:blur(8px);
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+}
+#toggle-sidebar:hover{background:rgba(255,255,255,.25);}
+#toggle-sidebar span{font-family:'DM Sans',sans-serif;font-size:17.5px;font-weight:500;color:rgba(255,255,255,.85);}
+#toggle-sidebar svg{transition:transform .3s;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR (oculto no mobile) -->
+<div class="sidebar" id="sidebar" style="display:none;">
+  <div>
+    <h1>UCB<br>Digital Training</h1>
+    <p style="margin-top:8px">Protótipo interativo — clique nas telas para navegar.</p>
+  </div>
+  <div class="nav-pills">
+    <div class="nav-pill active" id="pill-role" onclick="goTo('role')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Seleção de perfil</span>
+    </div>
+    <div class="nav-pill" id="pill-login" onclick="goTo('login')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Login</span>
+    </div>
+    <div class="nav-pill" id="pill-forgot" onclick="goTo('forgot')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Esqueci a senha</span>
+    </div>
+    <div class="nav-pill" id="pill-menu" onclick="goTo('menu')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Menu</span>
+    </div>
+    <div class="nav-pill" id="pill-home" onclick="goTo('home')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Home</span>
+    </div>
+    <div class="nav-pill" id="pill-training" onclick="goTo('training')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Detalhe do Treinamento</span>
+    </div>
+    <div class="nav-pill" id="pill-coaching" onclick="goTo('coaching')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Gerenciar Conteúdo</span>
+    </div>
+    <div class="nav-pill" id="pill-create-training" onclick="goTo('create-training')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Criar Treinamento</span>
+    </div>
+    <div class="nav-pill" id="pill-downloads" onclick="goTo('downloads')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Downloads</span>
+    </div>
+    <div class="nav-pill" id="pill-relatorios" onclick="goTo('relatorios')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Relatórios</span>
+    </div>
+    <div class="nav-pill" id="pill-perguntas" onclick="goTo('perguntas')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Perguntas Frequentes</span>
+    </div>
+    <div class="nav-pill" id="pill-messages" onclick="goTo('messages')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Mensagens</span>
+    </div>
+    <div class="nav-pill" id="pill-chat" onclick="goTo('chat')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Chat</span>
+    </div>
+    <div class="nav-pill" id="pill-notifications" onclick="goTo('notifications')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Notificações</span>
+    </div>
+    <div class="nav-pill" id="pill-profile" onclick="goTo('profile')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Perfil</span>
+    </div>
+    <div class="nav-pill" id="pill-avaliar" onclick="goTo('avaliar')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Avaliar Resposta</span>
+    </div>
+    <div class="nav-pill" id="pill-edit-profile" onclick="goTo('edit-profile')">
+      <div class="pill-dot"></div>
+      <span class="pill-label">Editar Perfil</span>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:16px;">
+    <p style="font-size:12px;color:rgba(255,255,255,.3);">Design system UCB · DM Sans · navy #001489 · teal #00A79D</p>
+  </div>
+</div>
+
+<!-- DEVICE -->
+<div class="device">
+  <div class="notch"></div>
+  <div class="home-indicator"></div>
+
+  <!-- ══════════════════════════════
+       0. SELEÇÃO DE PERFIL
+  ══════════════════════════════ -->
+  <div class="screen" id="s-role" style="background:linear-gradient(165deg,var(--navy) 0%,var(--navy2) 55%,var(--navy-dark) 100%);">
+    <div class="sbar" style="color:white;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C10.2 2.5 12.1 3.4 13.5 4.9L15 3.3C13.2 1.3 10.7 0 8 0C5.3 0 2.8 1.3 1 3.3L2.5 4.9C3.9 3.4 5.8 2.5 8 2.5Z" fill="white"/><path d="M8 5.5C9.5 5.5 10.8 6.1 11.8 7.1L13.3 5.5C11.9 4.1 10 3.2 8 3.2C6 3.2 4.1 4.1 2.7 5.5L4.2 7.1C5.2 6.1 6.5 5.5 8 5.5Z" fill="white"/><circle cx="8" cy="10" r="2" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+
+    <!-- decorative circles -->
+    <div class="login-circle" style="width:280px;height:280px;top:-80px;right:-80px;"></div>
+    <div class="login-circle" style="width:320px;height:320px;top:60px;left:-120px;border-width:1px;border-color:rgba(255,255,255,.04);"></div>
+
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:60px 24px 40px;overflow-y:auto;">
+      <!-- Logo -->
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="display:inline-block;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);border-radius:14px;padding:10px 22px;font-size:20px;font-weight:700;color:white;letter-spacing:2px;margin-bottom:10px;">UCB</div>
+        <div style="font-size:16px;font-weight:600;color:white;margin-bottom:4px;">Digital Training</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);">Selecione seu perfil para continuar</div>
+      </div>
+
+      <!-- Role cards -->
+      <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+
+        <!-- Colaborador -->
+        <div onclick="goTo('login')" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:16px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,.16)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">
+          <div style="width:44px;height:44px;border-radius:22px;background:rgba(0,167,157,.25);border:1.5px solid rgba(0,167,157,.5);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00A79D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;color:white;">Colaborador</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:2px;">Acessa e conclui treinamentos</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Gerente -->
+        <div onclick="goTo('login')" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:16px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.16)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">
+          <div style="width:44px;height:44px;border-radius:22px;background:rgba(232,144,10,.2);border:1.5px solid rgba(232,144,10,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e8900a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;color:white;">Gerente</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:2px;">Avalia respostas e acompanha equipe</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Marketing -->
+        <div onclick="goTo('login')" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:16px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.16)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">
+          <div style="width:44px;height:44px;border-radius:22px;background:rgba(0,167,157,.15);border:1.5px solid rgba(0,167,157,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00A79D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;color:white;">Marketing</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:2px;">Cria e publica treinamentos</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Admin -->
+        <div onclick="goTo('login')" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:16px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.16)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">
+          <div style="width:44px;height:44px;border-radius:22px;background:rgba(214,48,49,.15);border:1.5px solid rgba(214,48,49,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;color:white;">Administrador</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:2px;">Gestão completa da plataforma</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Visitante -->
+        <div onclick="goTo('login')" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:16px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.06)'">
+          <div style="width:44px;height:44px;border-radius:22px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;color:rgba(255,255,255,.6);">Visitante</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:2px;">Acesso limitado ao catálogo</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+      </div>
+
+      <div style="margin-top:24px;font-size:22px;color:rgba(255,255,255,.3);text-align:center;line-height:1.4;">Esta seleção é apenas para demonstração do protótipo</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       1. LOGIN
+  ══════════════════════════════ -->
+  <div class="screen off-right sb-light" id="s-login">
+    <div class="sbar">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C10.2 2.5 12.1 3.4 13.5 4.9L15 3.3C13.2 1.3 10.7 0 8 0C5.3 0 2.8 1.3 1 3.3L2.5 4.9C3.9 3.4 5.8 2.5 8 2.5Z" fill="white"/><path d="M8 5.5C9.5 5.5 10.8 6.1 11.8 7.1L13.3 5.5C11.9 4.1 10 3.2 8 3.2C6 3.2 4.1 4.1 2.7 5.5L4.2 7.1C5.2 6.1 6.5 5.5 8 5.5Z" fill="white"/><circle cx="8" cy="10" r="2" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <!-- decorative circles -->
+    <div class="login-circle" style="width:280px;height:280px;top:-80px;right:-80px;"></div>
+    <div class="login-circle" style="width:320px;height:320px;top:60px;left:-120px;border-width:1px;border-color:rgba(255,255,255,.04);"></div>
+    <div class="login-circle" style="width:240px;height:240px;bottom:-100px;right:-60px;border-color:rgba(255,255,255,.05);"></div>
+    <div class="login-body">
+      <div class="login-logo-area">
+        <div class="login-logo-badge">UCB</div>
+        <div class="login-logo-name">Digital Training</div>
+        <div class="login-logo-tagline">Inspired by patients. Driven by science.</div>
+      </div>
+      <div class="login-form">
+        <div class="login-input-row">
+          <input type="email" placeholder="Usuário" value="ana.ferreira@ucb.com.br">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="login-input-row">
+          <input type="password" placeholder="Senha" value="••••••••">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <button class="btn-teal" onclick="goTo('home')">Logar</button>
+        <div class="login-forgot" onclick="goTo('forgot')">Esqueci minha senha</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       2. FORGOT PASSWORD
+  ══════════════════════════════ -->
+  <div class="screen off-right sb-light" id="s-forgot">
+    <div class="sbar">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C10.2 2.5 12.1 3.4 13.5 4.9L15 3.3C13.2 1.3 10.7 0 8 0C5.3 0 2.8 1.3 1 3.3L2.5 4.9C3.9 3.4 5.8 2.5 8 2.5Z" fill="white"/><path d="M8 5.5C9.5 5.5 10.8 6.1 11.8 7.1L13.3 5.5C11.9 4.1 10 3.2 8 3.2C6 3.2 4.1 4.1 2.7 5.5L4.2 7.1C5.2 6.1 6.5 5.5 8 5.5Z" fill="white"/><circle cx="8" cy="10" r="2" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="login-circle" style="width:280px;height:280px;top:-80px;right:-80px;"></div>
+    <div class="login-circle" style="width:240px;height:240px;bottom:-60px;left:-60px;border-color:rgba(255,255,255,.05);"></div>
+    <div class="login-body">
+      <div class="login-logo-area">
+        <div style="width:56px;height:56px;border-radius:28px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="login-logo-name">Recuperar senha</div>
+        <div class="login-logo-tagline" style="max-width:240px;text-align:center;">Enviaremos um link de recuperação para o seu email corporativo.</div>
+      </div>
+      <div class="login-form">
+        <div class="login-input-row">
+          <input type="email" placeholder="seu@ucb.com.br" value="">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <button class="btn-teal">Enviar link de recuperação</button>
+        <div class="login-forgot" onclick="goTo('login')">← Voltar ao login</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       3. HOME
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-home">
+    <div class="sbar" style="color:white;z-index:20;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C10.2 2.5 12.1 3.4 13.5 4.9L15 3.3C13.2 1.3 10.7 0 8 0C5.3 0 2.8 1.3 1 3.3L2.5 4.9C3.9 3.4 5.8 2.5 8 2.5Z" fill="white"/><path d="M8 5.5C9.5 5.5 10.8 6.1 11.8 7.1L13.3 5.5C11.9 4.1 10 3.2 8 3.2C6 3.2 4.1 4.1 2.7 5.5L4.2 7.1C5.2 6.1 6.5 5.5 8 5.5Z" fill="white"/><circle cx="8" cy="10" r="2" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="home-header">
+      <div class="home-topbar">
+        <div class="home-logo">
+          <svg width="70" height="14" viewBox="0 0 70 14" fill="none">
+            <text x="0" y="12" font-family="DM Sans" font-size="13" font-weight="700" fill="white" letter-spacing="1">UCB</text>
+            <circle cx="34" cy="7" r="2.5" fill="#00A79D"/>
+          </svg>
+        </div>
+        <div class="home-actions">
+          <div class="hbtn" onclick="goTo('notifications')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <div class="nbadge-sm"><span>3</span></div>
+          </div>
+          <div class="hbtn" onclick="goTo('menu')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="home-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="Procurar" style="color:#6b7280;">
+      </div>
+      <div>
+        <div class="home-filter-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="11" y2="6"/><line x1="13" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="9" y2="12"/><line x1="11" y1="12" x2="20" y2="12"/><circle cx="12" cy="6" r="2" fill="white" stroke="none"/><circle cx="10" cy="12" r="2" fill="white" stroke="none"/></svg>
+          Filtrar
+        </div>
+      </div>
+    </div>
+    <div class="s-body" style="top:218px;">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:12px;padding-bottom:36px;">
+
+        <!-- TimelineCard 0 -->
+        <div class="tl-card" onclick="goTo('training')">
+          <div class="tl-card-inner">
+            <div class="tl-card-bg" style="background:linear-gradient(135deg,#0a2a1a 0%,#0d3d24 60%,#061a10 100%);"></div>
+            <div class="tl-card-gradient"></div>
+            <div class="tl-card-overlay">
+              <div class="tl-card-text">
+                <div class="tl-card-title">Treinamento</div>
+                <div class="tl-card-meta">Termina em 15/07 • 10:00</div>
+              </div>
+              <div class="tl-play-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+            </div>
+            <div class="tl-progress"><div class="tl-progress-fill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <!-- TimelineCard 1 -->
+        <div class="tl-card" onclick="goTo('training')">
+          <div class="tl-card-inner">
+            <div class="tl-card-bg" style="background:linear-gradient(135deg,#001489 0%,#003082 60%,#00164a 100%);"></div>
+            <div class="tl-card-gradient"></div>
+            <div class="tl-card-overlay">
+              <div class="tl-card-text">
+                <div class="tl-card-title">Nossas Pesquisas</div>
+                <div class="tl-card-meta">Termina em 01/08 • 10:34</div>
+              </div>
+              <div class="tl-play-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+            </div>
+            <div class="tl-progress"><div class="tl-progress-fill" style="width:75%"></div></div>
+          </div>
+        </div>
+
+        <!-- TimelineCard 2 -->
+        <div class="tl-card">
+          <div class="tl-card-inner">
+            <div class="tl-card-bg" style="background:linear-gradient(135deg,#00A79D 0%,#006b63 60%,#004a45 100%);"></div>
+            <div class="tl-card-gradient"></div>
+            <div class="tl-card-overlay">
+              <div class="tl-card-text">
+                <div class="tl-card-title">Institucional</div>
+                <div class="tl-card-meta">Termina em 15/07 • 04:00</div>
+              </div>
+              <div class="tl-play-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+            </div>
+            <div class="tl-progress"><div class="tl-progress-fill" style="width:30%"></div></div>
+          </div>
+        </div>
+
+        <!-- TimelineCard 3 — done -->
+        <div class="tl-card">
+          <div class="tl-card-inner">
+            <div class="tl-card-bg" style="background:linear-gradient(135deg,#1a2e4a 0%,#0f1e33 60%,#060d1a 100%);"></div>
+            <div class="tl-card-gradient"></div>
+            <div class="tl-card-overlay">
+              <div class="tl-card-text">
+                <div class="tl-card-title">Treinamento</div>
+                <div class="tl-card-meta">Termina em 15/07 • 10:00</div>
+              </div>
+              <div class="tl-play-btn done">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TimelineCard 4 -->
+        <div class="tl-card">
+          <div class="tl-card-inner">
+            <div class="tl-card-bg" style="background:linear-gradient(135deg,#2d1a5e 0%,#1a0f3a 60%,#0a061a 100%);"></div>
+            <div class="tl-card-gradient"></div>
+            <div class="tl-card-overlay">
+              <div class="tl-card-text">
+                <div class="tl-card-title">Seminário</div>
+                <div class="tl-card-meta">Termina em 15/07 • 48:00</div>
+              </div>
+              <div class="tl-play-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+            </div>
+            <div class="tl-progress"><div class="tl-progress-fill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       4. TRAINING DETAIL
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-training">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C10.2 2.5 12.1 3.4 13.5 4.9L15 3.3C13.2 1.3 10.7 0 8 0C5.3 0 2.8 1.3 1 3.3L2.5 4.9C3.9 3.4 5.8 2.5 8 2.5Z" fill="white"/><path d="M8 5.5C9.5 5.5 10.8 6.1 11.8 7.1L13.3 5.5C11.9 4.1 10 3.2 8 3.2C6 3.2 4.1 4.1 2.7 5.5L4.2 7.1C5.2 6.1 6.5 5.5 8 5.5Z" fill="white"/><circle cx="8" cy="10" r="2" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <!-- AppHeader -->
+    <div class="app-header" style="padding-bottom:14px;">
+      <div class="app-header-row">
+        <div class="app-header-side">
+          <div class="hbtn" onclick="goTo('home')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          </div>
+        </div>
+        <div class="app-header-center">
+          <div class="app-header-title">Boas-vindas à UCB</div>
+          <div class="app-header-sub">Termina em 30/06</div>
+        </div>
+        <div class="app-header-side app-header-right"></div>
+      </div>
+    </div>
+    <div class="s-body" style="top:110px;bottom:76px;">
+      <!-- Sub-header with particles -->
+      <div class="td-subheader">
+        <div class="td-particle" style="width:5px;height:5px;top:8px;left:15%;"></div>
+        <div class="td-particle" style="width:4px;height:4px;top:20px;left:70%;"></div>
+        <div class="td-particle" style="width:3px;height:3px;top:36px;left:40%;"></div>
+        <div class="td-particle" style="width:6px;height:6px;top:12px;left:88%;"></div>
+        <div class="td-particle" style="width:4px;height:4px;top:42px;left:8%;"></div>
+        <div class="td-author">Por <strong>UCB Treinamentos</strong>&nbsp; | &nbsp;Enviado em 01/06</div>
+      </div>
+      <!-- Floating video card -->
+      <div class="td-video-card-wrap">
+        <div class="td-video-card">
+          <div class="td-video-thumb">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,#001489 0%,#003082 60%,#00164a 100%);"></div>
+            <div class="td-video-overlay"></div>
+            <div class="td-video-play">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+          <div class="td-player-bar">
+            <div class="td-player-progress">
+              <div class="td-player-fill"></div>
+              <div class="td-player-thumb"></div>
+            </div>
+            <div class="td-player-controls">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <div style="flex:1"></div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.5" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span class="td-player-time">03:22</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- White content -->
+      <div class="td-content">
+        <div class="td-desc">
+          Conheça a história, valores e cultura da UCB. Um mergulho na nossa missão de ser inspirados pelos pacientes e guiados pela ciência. Este módulo apresenta os pilares que fundamentam nossa atuação global.
+          <div class="td-ver-mais">ver mais</div>
+        </div>
+        <div class="td-sep"></div>
+        <div class="td-attach">
+          <div class="td-attach-label">Anexo:</div>
+          <div class="td-attach-row">
+            <div class="td-pdf-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="td-pdf-label">PDF</span>
+            </div>
+            <span class="td-attach-name">material-complementar.pdf</span>
+          </div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+    <!-- Footer -->
+    <div class="td-footer">
+      <button class="btn-responder" onclick="openActionSheet()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Responder
+      </button>
+    </div>
+
+    <!-- Action Sheet -->
+    <div class="action-sheet-overlay" id="action-sheet" onclick="handleOverlayClick(event)">
+      <div class="action-sheet">
+        <div class="action-sheet-group">
+          <div class="action-sheet-title">Enviar resposta</div>
+          <button class="action-sheet-btn" onclick="closeActionSheet()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px;"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="#007aff"/></svg>
+            Gravar vídeo
+          </button>
+          <button class="action-sheet-btn" onclick="closeActionSheet()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Selecionar da galeria
+          </button>
+        </div>
+        <button class="action-sheet-cancel" onclick="closeActionSheet()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       5. CONTEÚDO (lista de treinamentos)
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-coaching">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side"></div>
+        <div class="app-header-center"><div class="app-header-title">Conteúdo</div></div>
+        <div class="app-header-side app-header-right">
+          <!-- botão + para criar -->
+          <div class="hbtn" onclick="goTo('create-training')" style="background:rgba(255,255,255,.18);border-radius:17px;width:34px;height:34px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+          <div class="hbtn" onclick="goTo('notifications')">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div class="hbtn" onclick="goTo('menu')">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="s-body" style="top:110px;background:var(--silver);">
+      <div style="padding:0 0 36px;">
+
+        <!-- ═══ SEÇÃO: TREINAMENTOS ═══ -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px 10px;background:var(--silver);">
+          <span style="font-size:11px;font-weight:700;color:var(--ink2);letter-spacing:.8px;text-transform:uppercase;">Treinamentos</span>
+          <div onclick="goTo('create-training')" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+            <div style="width:20px;height:20px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <span style="font-size:12px;font-weight:600;color:var(--navy);">Novo</span>
+          </div>
+        </div>
+
+        <div style="background:white;border-top:1px solid var(--line);">
+          <!-- Nossas Pesquisas -->
+          <div onclick="goTo('training')" style="display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;min-height:80px;">
+            <div style="width:64px;height:48px;border-radius:6px;background:#001489;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:20px;font-weight:700;color:rgba(255,255,255,.8);">N</span>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:14px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:4px;">Nossas Pesquisas</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="background:var(--teal-soft);border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600;color:var(--teal-dark);">Institucional</span>
+                <span class="tag tag-success" style="font-size:10px;">Publicado</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
+              <div onclick="event.stopPropagation();goTo('create-training')" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;" title="Editar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+              <div onclick="event.stopPropagation()" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;" title="Excluir">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </div>
+            </div>
+          </div>
+          <div style="height:1px;background:var(--line);margin-left:96px;"></div>
+
+          <!-- Seminário -->
+          <div onclick="goTo('training')" style="display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;min-height:80px;">
+            <div style="width:64px;height:48px;border-radius:6px;background:#00A79D;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:20px;font-weight:700;color:rgba(255,255,255,.8);">S</span>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:14px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:4px;">Seminário</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="background:var(--teal-soft);border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600;color:var(--teal-dark);">Científico</span>
+                <span class="tag tag-success" style="font-size:10px;">Publicado</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
+              <div onclick="event.stopPropagation();goTo('create-training')" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;" title="Editar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+              <div onclick="event.stopPropagation()" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;" title="Excluir">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </div>
+            </div>
+          </div>
+          <div style="height:1px;background:var(--line);margin-left:96px;"></div>
+
+          <!-- Institucional -->
+          <div onclick="goTo('training')" style="display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;min-height:80px;">
+            <div style="width:64px;height:48px;border-radius:6px;background:#553c9a;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:20px;font-weight:700;color:rgba(255,255,255,.8);">I</span>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:14px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:4px;">Institucional</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="background:var(--teal-soft);border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600;color:var(--teal-dark);">Comercial</span>
+                <span class="tag tag-success" style="font-size:10px;">Publicado</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
+              <div onclick="event.stopPropagation();goTo('create-training')" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;" title="Editar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+              <div onclick="event.stopPropagation()" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:6px;" title="Excluir">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ SEÇÃO: RESPOSTAS ═══ -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 10px;background:var(--silver);margin-top:8px;">
+          <span style="font-size:11px;font-weight:700;color:var(--ink2);letter-spacing:.8px;text-transform:uppercase;">Respostas</span>
+        </div>
+
+        <!-- Avaliar -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px 8px;background:white;border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-size:11px;font-weight:700;color:var(--ink);letter-spacing:.5px;text-transform:uppercase;">Avaliar respostas</span>
+          </div>
+          <span style="font-size:11px;background:#fff3e0;color:var(--warn);font-weight:700;padding:2px 8px;border-radius:9999px;">2 pendentes</span>
+        </div>
+
+        <div onclick="goTo('avaliar')" style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:white;cursor:pointer;min-height:72px;">
+          <div style="width:40px;height:40px;border-radius:20px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-size:14px;font-weight:700;color:white;">AF</span>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Ana Ferreira</div>
+            <div style="font-size:12px;color:var(--muted);">Nossas Pesquisas · 25/06</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="tag tag-warning" style="font-size:10px;flex-shrink:0;">Aguardando</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--line);margin-left:72px;"></div>
+        <div onclick="goTo('avaliar')" style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:white;cursor:pointer;min-height:72px;">
+          <div style="width:40px;height:40px;border-radius:20px;background:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-size:14px;font-weight:700;color:white;">BL</span>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Beatriz Lima</div>
+            <div style="font-size:12px;color:var(--muted);">Institucional · 18/06</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="tag tag-warning" style="font-size:10px;flex-shrink:0;">Aguardando</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+
+        <!-- Avaliadas -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px 8px;background:white;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style="font-size:11px;font-weight:700;color:var(--ink);letter-spacing:.5px;text-transform:uppercase;">Respostas avaliadas</span>
+          </div>
+          <span style="font-size:11px;background:#e6f7f0;color:var(--success);font-weight:700;padding:2px 8px;border-radius:9999px;">1 avaliada</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:white;cursor:pointer;min-height:72px;">
+          <div style="width:40px;height:40px;border-radius:20px;background:#553c9a;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-size:14px;font-weight:700;color:white;">CM</span>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Carlos Menezes</div>
+            <div style="font-size:12px;color:var(--muted);">Seminário · 20/06</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="text-align:right;">
+              <span class="tag tag-success" style="font-size:10px;display:block;margin-bottom:2px;">Avaliado</span>
+              <span style="font-size:11px;font-weight:700;color:var(--success);">8,5 / 10</span>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Sheet avaliação (dentro de s-coaching) -->
+  <div class="action-sheet-overlay" id="eval-action-sheet" onclick="if(event.target===this)closeEvalSheet()" style="position:absolute;">
+    <div class="action-sheet">
+      <div class="action-sheet-group">
+        <div class="action-sheet-title">Avaliar resposta</div>
+        <button class="action-sheet-btn primary" onclick="closeEvalSheet()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          Assistir vídeo da resposta
+        </button>
+        <button class="action-sheet-btn primary" onclick="closeEvalSheet()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Dar nota e feedback
+        </button>
+      </div>
+      <button class="action-sheet-cancel" onclick="closeEvalSheet()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       AVALIAR RESPOSTA
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-avaliar">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+
+    <!-- Header navy -->
+    <div style="background:linear-gradient(180deg,var(--navy) 0%,var(--navy2) 100%);padding:50px 20px 14px;position:absolute;top:0;left:0;right:0;z-index:30;">
+      <div style="display:flex;align-items:center;min-height:44px;gap:12px;">
+        <div class="hbtn" onclick="goTo('coaching')" style="flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </div>
+        <div style="flex:1;text-align:center;font-size:17px;font-weight:600;color:white;letter-spacing:.1px;">Avaliação</div>
+        <div style="min-width:38px;display:flex;align-items:center;gap:2px;">
+          <div class="hbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+          <div class="hbtn" style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="nbadge-sm" style="top:4px;right:4px;"><span>2</span></div></div>
+          <div class="hbtn" onclick="goTo('menu')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s-body" style="top:110px;bottom:0;background:var(--silver);">
+
+      <!-- Player de vídeo da resposta -->
+      <div style="background:#000;position:relative;">
+        <!-- Thumbnail simulada com gradiente + avatar centralizado -->
+        <div style="width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1a2e 0%,#2d1b4e 50%,#1a2e1a 100%);position:relative;display:flex;align-items:center;justify-content:center;">
+          <!-- Silhueta / avatar da pessoa -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;opacity:.7;">
+            <div style="width:56px;height:56px;border-radius:28px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;margin-bottom:-8px;">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="rgba(255,255,255,.6)" stroke="none"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            </div>
+            <div style="width:80px;height:56px;background:rgba(255,255,255,.15);border-radius:4px;"></div>
+          </div>
+          <!-- overlay escuro inferior -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,transparent,rgba(0,0,0,.7));"></div>
+        </div>
+
+        <!-- Barra do player -->
+        <div style="background:#111;padding:8px 14px 10px;">
+          <div style="position:relative;height:3px;background:rgba(255,255,255,.25);border-radius:2px;margin-bottom:8px;">
+            <div style="width:85%;height:3px;background:var(--teal);border-radius:2px;"></div>
+            <div style="position:absolute;top:-4px;left:calc(85% - 5px);width:11px;height:11px;border-radius:50%;background:white;border:2px solid var(--teal);"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span style="font-size:11px;color:rgba(255,255,255,.8);">0:00</span>
+            <div style="flex:1;"></div>
+            <span style="font-size:11px;color:rgba(255,255,255,.5);">-0:12</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info da resposta -->
+      <div style="background:white;padding:16px 20px 18px;border-bottom:1px solid var(--line);">
+        <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:4px;">Resposta — Ana Ferreira</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:2px;">por <strong style="color:var(--ink2);">Ana Ferreira</strong></div>
+        <div style="font-size:12px;color:var(--muted2);">Nossas Pesquisas · Enviado hoje | 9h25</div>
+      </div>
+
+      <!-- Nota -->
+      <div style="background:white;margin-top:8px;padding:20px;">
+        <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;">Escolha a nota</div>
+        <div class="time-slider-wrap" style="padding-top:32px;">
+          <div class="time-slider-tooltip" id="nota-tooltip" style="background:var(--navy);">10,0</div>
+          <input type="range" class="time-slider" id="nota-slider"
+            min="0" max="10" step="0.5" value="10"
+            oninput="updateNota(this)"
+            style="background:linear-gradient(to right, var(--navy) 100%, var(--line) 100%);">
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <span style="font-size:11px;color:var(--muted);">0</span>
+          <span style="font-size:11px;color:var(--muted);">10</span>
+        </div>
+      </div>
+
+      <!-- Comentário -->
+      <div style="background:white;margin-top:8px;padding:20px;">
+        <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Escreva um comentário</div>
+        <textarea placeholder="Ótimo trabalho!" style="width:100%;min-height:100px;border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);resize:none;outline:none;line-height:1.5;">Ótimo trabalho!</textarea>
+      </div>
+
+      <!-- Botão enviar -->
+      <div style="padding:20px;padding-bottom:36px;">
+        <button onclick="goTo('coaching')" style="width:100%;height:52px;background:var(--navy);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:white;cursor:pointer;letter-spacing:.3px;">
+          Enviar avaliação
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       5b. CRIAR TREINAMENTO
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-create-training">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side">
+          <div class="hbtn" onclick="goTo('coaching')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          </div>
+        </div>
+        <div class="app-header-center"><div class="app-header-title">Novo treinamento</div></div>
+        <div class="app-header-side app-header-right"></div>
+      </div>
+    </div>
+    <div class="s-body" style="top:110px;bottom:0;background:var(--silver);">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:20px;padding-bottom:48px;">
+
+        <!-- Nome do treinamento -->
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Nome do treinamento *</span>
+          <div style="background:white;border:1px solid var(--line);border-radius:6px;padding:0 14px;height:50px;display:flex;align-items:center;">
+            <span style="font-size:14px;color:var(--ink);">Nossas Pesquisas</span>
+          </div>
+        </div>
+
+        <!-- Descrição -->
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Descrição</span>
+          <div style="background:white;border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-height:88px;">
+            <span style="font-size:14px;color:var(--ink);line-height:1.55;">Conheça os avanços das nossas pesquisas clínicas e os estudos em andamento para novas indicações terapêuticas nas áreas de imunologia e neurologia.</span>
+          </div>
+        </div>
+
+        <!-- Data e hora limite -->
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Data e hora limite de resposta *</span>
+          <div style="background:white;border:1px solid var(--line);border-radius:6px;padding:0 14px;height:50px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Até 15.04 | 14h37</span>
+          </div>
+        </div>
+
+        <!-- Agendar publicação -->
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Agendar data de publicação *</span>
+          <div style="background:white;border:1px solid var(--line);border-radius:6px;padding:0 14px;height:50px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Disponível em 08.02 | 14h08</span>
+          </div>
+        </div>
+
+        <!-- Duração máxima (slider interativo) -->
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Duração máxima da resposta em minutos</span>
+          <div class="time-slider-wrap">
+            <div class="time-slider-tooltip" id="slider-tooltip">2,0</div>
+            <input type="range" class="time-slider" id="time-slider"
+              min="0.5" max="10" step="0.5" value="2"
+              oninput="updateSlider(this)">
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="font-size:11px;color:var(--muted);">0,5 min</span>
+            <span style="font-size:11px;color:var(--muted);">10 min</span>
+          </div>
+        </div>
+
+        <!-- Franquia de negócios -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Franquia de negócios</span>
+
+          <!-- lista de tags adicionadas -->
+          <div id="franquia-list" style="display:flex;flex-direction:column;gap:6px;">
+            <div class="franquia-tag" style="display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--line);border-radius:6px;padding:12px 14px;">
+              <div onclick="removeFranquia(this)" style="width:20px;height:20px;border-radius:10px;background:var(--error);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </div>
+              <span style="font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.3px;">IMUNOLOGIA BRASIL</span>
+            </div>
+          </div>
+
+          <!-- botão adicionar -->
+          <div onclick="toggleFranquiaMenu()" style="display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--line);border-radius:6px;padding:12px 14px;cursor:pointer;position:relative;">
+            <div style="width:20px;height:20px;border-radius:10px;background:var(--success);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <span style="font-size:13px;color:var(--muted);">Adicionar franquia de negócios</span>
+          </div>
+
+          <!-- dropdown de opções -->
+          <div id="franquia-menu" style="display:none;background:white;border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.1);">
+            <div class="franquia-option" data-name="NEUROLOGIA GLOBAL" onclick="addFranquia(this)" style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--line);" onmouseover="this.style.background='var(--silver)'" onmouseout="this.style.background='white'">
+              <div style="width:8px;height:8px;border-radius:4px;background:var(--navy);flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:600;color:var(--ink);">NEUROLOGIA GLOBAL</span>
+            </div>
+            <div class="franquia-option" data-name="ONCOLOGIA LAT-AM" onclick="addFranquia(this)" style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--line);" onmouseover="this.style.background='var(--silver)'" onmouseout="this.style.background='white'">
+              <div style="width:8px;height:8px;border-radius:4px;background:var(--navy);flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:600;color:var(--ink);">ONCOLOGIA LAT-AM</span>
+            </div>
+            <div class="franquia-option" data-name="EPILEPSIA EUROPA" onclick="addFranquia(this)" style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;" onmouseover="this.style.background='var(--silver)'" onmouseout="this.style.background='white'">
+              <div style="width:8px;height:8px;border-radius:4px;background:var(--navy);flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:600;color:var(--ink);">EPILEPSIA EUROPA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vídeo do treinamento -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Vídeo do treinamento</span>
+          <button onclick="openVideoSheet()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--navy);border-radius:8px;padding:14px;background:white;cursor:pointer;font-family:'DM Sans',sans-serif;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            <span style="font-size:13px;font-weight:600;color:var(--navy);">Selecionar vídeo</span>
+          </button>
+        </div>
+
+        <!-- Botões de ação -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+          <button onclick="goTo('coaching')" style="width:100%;height:50px;background:white;border:1.5px solid var(--navy);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--navy);cursor:pointer;">Salvar rascunho</button>
+          <button onclick="goTo('home')" style="width:100%;height:50px;background:var(--navy);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:white;cursor:pointer;">Publicar</button>
+        </div>
+
+        <!-- Apagar treinamento -->
+        <div style="border:1px solid var(--line);border-radius:8px;overflow:hidden;">
+          <button style="width:100%;height:50px;background:white;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--error);cursor:pointer;letter-spacing:.5px;text-transform:uppercase;">Apagar treinamento</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Action Sheet vídeo -->
+    <div class="action-sheet-overlay" id="video-action-sheet" onclick="handleVideoOverlayClick(event)">
+      <div class="action-sheet">
+        <div class="action-sheet-group">
+          <div class="action-sheet-title">Selecionar vídeo</div>
+          <button class="action-sheet-btn" onclick="closeVideoSheet()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px;"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="#007aff"/></svg>
+            Gravar vídeo
+          </button>
+          <button class="action-sheet-btn" onclick="closeVideoSheet()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Selecionar da galeria
+          </button>
+        </div>
+        <button class="action-sheet-cancel" onclick="closeVideoSheet()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       5c. DOWNLOADS
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-downloads">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side">
+          <div class="hbtn" onclick="goTo('coaching')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          </div>
+        </div>
+        <div class="app-header-center"><div class="app-header-title">Downloads</div></div>
+        <div class="app-header-side app-header-right"></div>
+      </div>
+    </div>
+
+    <div class="s-body" style="top:110px;background:white;">
+      <div style="padding:20px;">
+
+        <!-- Título + busca -->
+        <div style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:16px;">Histórico de Downloads</div>
+
+        <!-- Busca -->
+        <div style="display:flex;align-items:center;background:white;border:1px solid var(--line);border-radius:8px;padding:0 14px;height:46px;margin-bottom:16px;gap:10px;">
+          <input placeholder="Procurar" style="flex:1;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--muted);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+
+        <!-- Filtro por data -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px;">Filtrar por data:</div>
+          <div style="display:flex;gap:10px;">
+            <div style="display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;background:white;cursor:pointer;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span style="font-size:13px;color:var(--ink);">01/06/2023</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;background:white;cursor:pointer;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span style="font-size:13px;color:var(--ink);">31/07/2023</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de downloads -->
+        <div style="display:flex;flex-direction:column;gap:0;">
+
+          <!-- Item 1 -->
+          <div style="padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:700;color:var(--ink);">Treinamento – Cynthia Dewi</div>
+            <div style="font-size:12px;color:var(--teal);font-style:italic;margin-bottom:10px;">07/07/2023</div>
+            <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <div style="width:36px;height:40px;border-radius:4px;background:#fdecea;border:1px solid #ffd5d5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span style="font-size:7px;font-weight:700;color:#d63031;letter-spacing:.3px;">PDF</span>
+              </div>
+              <span style="font-size:13px;color:var(--navy);text-decoration:underline;">material complementar.pdf</span>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div style="padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:700;color:var(--ink);">Treinamento – Mauro Siqueira</div>
+            <div style="font-size:12px;color:var(--teal);font-style:italic;margin-bottom:10px;">05/07/2023</div>
+            <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <div style="width:36px;height:40px;border-radius:4px;background:#fdecea;border:1px solid #ffd5d5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span style="font-size:7px;font-weight:700;color:#d63031;letter-spacing:.3px;">PDF</span>
+              </div>
+              <span style="font-size:13px;color:var(--navy);text-decoration:underline;">material complementar.pdf</span>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div style="padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:700;color:var(--ink);">Seminário – Clara Oliveira</div>
+            <div style="font-size:12px;color:var(--teal);font-style:italic;margin-bottom:10px;">28/06/2023</div>
+            <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <div style="width:36px;height:40px;border-radius:4px;background:#fdecea;border:1px solid #ffd5d5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span style="font-size:7px;font-weight:700;color:#d63031;letter-spacing:.3px;">PDF</span>
+              </div>
+              <span style="font-size:13px;color:var(--navy);text-decoration:underline;">material complementar.pdf</span>
+            </div>
+          </div>
+
+          <!-- Item 4 — múltiplos arquivos -->
+          <div style="padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:700;color:var(--ink);">Valéria Oliveira – Mensagens</div>
+            <div style="font-size:12px;color:var(--teal);font-style:italic;margin-bottom:10px;">27/06/2023</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <div style="width:36px;height:40px;border-radius:4px;background:#e6f7ee;border:1px solid #b7dfc8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d7a43" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  <span style="font-size:7px;font-weight:700;color:#1d7a43;letter-spacing:.3px;">XLSX</span>
+                </div>
+                <span style="font-size:13px;color:var(--navy);text-decoration:underline;">planilha_balanço_Agosto2022.xlsx</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <div style="width:36px;height:40px;border-radius:4px;background:#e8f0fe;border:1px solid #b6ccf5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <span style="font-size:7px;font-weight:700;color:#1a56db;letter-spacing:.3px;">JPG</span>
+                </div>
+                <span style="font-size:13px;color:var(--navy);text-decoration:underline;">screenshot_25062023.jpg</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 5 -->
+          <div style="padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:700;color:var(--ink);">Anderson Mattos – Mensagens</div>
+            <div style="font-size:12px;color:var(--teal);font-style:italic;margin-bottom:10px;">25/06/2023</div>
+            <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <div style="width:36px;height:40px;border-radius:4px;background:#e6f7ee;border:1px solid #b7dfc8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d7a43" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span style="font-size:7px;font-weight:700;color:#1d7a43;letter-spacing:.3px;">XLSX</span>
+              </div>
+              <span style="font-size:13px;color:var(--navy);text-decoration:underline;">relatorio_de_vendas_1º_Semestre.xlsx</span>
+            </div>
+          </div>
+
+          <!-- Item 6 -->
+          <div style="padding-bottom:16px;">
+            <div style="font-size:14px;font-weight:700;color:var(--ink);">Anderson Mattos – Mensagens</div>
+            <div style="font-size:12px;color:var(--teal);font-style:italic;margin-bottom:10px;">25/06/2023</div>
+            <div style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <div style="width:36px;height:40px;border-radius:4px;background:#e8f0fe;border:1px solid #b6ccf5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span style="font-size:7px;font-weight:700;color:#1a56db;letter-spacing:.3px;">DOC</span>
+              </div>
+              <span style="font-size:13px;color:var(--navy);text-decoration:underline;">Boas práticas para o manual de vendas.doc</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       6. MESSAGES
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-messages">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side"></div>
+        <div class="app-header-center"><div class="app-header-title">Mensagens</div></div>
+        <div class="app-header-side app-header-right">
+          <div class="hbtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <div class="hbtn" onclick="goTo('menu')">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="s-body" style="top:110px;">
+      <div class="msg-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="Buscar conversa">
+      </div>
+      <div class="conv-row" onclick="goTo('chat')">
+        <div class="avatar"><span>CM</span></div>
+        <div class="conv-body">
+          <div class="conv-top">
+            <span class="conv-name unread">Carlos Menezes</span>
+            <span class="conv-time">5m</span>
+          </div>
+          <div class="conv-bottom">
+            <span class="conv-preview unread">Conseguiu ver o material do Cimzia?</span>
+            <div class="unread-badge"><span>2</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="conv-row" onclick="goTo('chat')">
+        <div class="avatar avatar-teal"><span>BL</span></div>
+        <div class="conv-body">
+          <div class="conv-top">
+            <span class="conv-name">Beatriz Lima</span>
+            <span class="conv-time">1h</span>
+          </div>
+          <div class="conv-bottom">
+            <span class="conv-preview">Você: Obrigada pelo feedback!</span>
+          </div>
+        </div>
+      </div>
+      <div class="conv-row" onclick="goTo('chat')">
+        <div class="avatar" style="background:#5b4fcf;"><span>RP</span></div>
+        <div class="conv-body">
+          <div class="conv-top">
+            <span class="conv-name">Rafael Pereira</span>
+            <span class="conv-time">2h</span>
+          </div>
+          <div class="conv-bottom">
+            <span class="conv-preview">Enviou um arquivo</span>
+            <div class="unread-badge"><span>1</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="conv-row" onclick="goTo('chat')">
+        <div class="avatar" style="background:#b45309;"><span>JS</span></div>
+        <div class="conv-body">
+          <div class="conv-top">
+            <span class="conv-name">Juliana Santos</span>
+            <span class="conv-time">ontem</span>
+          </div>
+          <div class="conv-bottom">
+            <span class="conv-preview">Você: Ok, vamos alinhar amanhã!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       7. CHAT
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-chat">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side">
+          <div class="hbtn" onclick="goTo('messages')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          </div>
+        </div>
+        <div class="app-header-center" style="display:flex;flex-direction:column;align-items:center;">
+          <div style="width:32px;height:32px;border-radius:16px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin-bottom:2px;">
+            <span style="font-size:12px;font-weight:600;color:white;">CM</span>
+          </div>
+          <div class="app-header-title" style="font-size:15px;">Carlos Menezes</div>
+        </div>
+        <div class="app-header-side app-header-right">
+          <div class="hbtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="s-body" style="top:115px;bottom:76px;">
+      <div class="chat-body">
+        <div class="chat-bubble-wrap">
+          <div class="avatar avatar-sm"><span>CM</span></div>
+          <div>
+            <div class="chat-bubble theirs">Oi Ana! Conseguiu ver o material do Cimzia que eu mandei ontem?</div>
+            <div class="chat-bubble-time">9:30</div>
+          </div>
+        </div>
+        <div class="chat-bubble-wrap mine">
+          <div>
+            <div class="chat-bubble mine">Oi Carlos! Sim, vi sim. Muito bom o conteúdo sobre o mecanismo de ação 👍</div>
+            <div class="chat-bubble-time mine">9:32 ✓✓</div>
+          </div>
+        </div>
+        <div class="chat-bubble-wrap">
+          <div class="avatar avatar-sm"><span>CM</span></div>
+          <div>
+            <div class="chat-bubble theirs">Que ótimo! Você já completou o módulo de treinamento sobre AR?</div>
+            <div class="chat-bubble-time">9:35</div>
+          </div>
+        </div>
+        <div class="chat-bubble-wrap mine">
+          <div>
+            <div class="chat-bubble mine">Estou em 75% ainda. Vou terminar hoje à tarde!</div>
+            <div class="chat-bubble-time mine">9:36 ✓</div>
+          </div>
+        </div>
+        <div class="chat-bubble-wrap">
+          <div class="avatar avatar-sm"><span>CM</span></div>
+          <div>
+            <div class="chat-bubble theirs">Conseguiu ver o material do Cimzia?</div>
+            <div class="chat-bubble-time">9:41</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-bar">
+      <input class="chat-input" placeholder="Mensagem...">
+      <button class="chat-send">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       8. NOTIFICATIONS
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-notifications">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side">
+          <div class="hbtn" onclick="goTo('home')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          </div>
+        </div>
+        <div class="app-header-center"><div class="app-header-title">Notificações</div></div>
+        <div class="app-header-side app-header-right">
+          <div class="hbtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><polyline points="20 6 9 17 4 12" stroke-width="1.5"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="s-body" style="top:110px;">
+      <div class="notif-row unread" onclick="goTo('training')">
+        <div class="notif-icon notif-icon-teal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A79D" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-title unread">Novo treinamento</div>
+          <div class="notif-sub">Nossas Pesquisas está disponível para você.</div>
+          <div class="notif-time">5 min</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="notif-row unread">
+        <div class="notif-icon notif-icon-warn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8900a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-title unread">Prazo se aproximando</div>
+          <div class="notif-sub">Boas-vindas à UCB termina em 2 dias.</div>
+          <div class="notif-time">1h</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="notif-row unread">
+        <div class="notif-icon notif-icon-success">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00875a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-title unread">Certificado emitido</div>
+          <div class="notif-sub">Você concluiu Comunicação Científica para Equipes.</div>
+          <div class="notif-time">3h</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="notif-row">
+        <div class="notif-icon notif-icon-navy">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#001489" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-title">Resposta avaliada</div>
+          <div class="notif-sub">Seu pitch de Briviact foi avaliado com nota 8,5.</div>
+          <div class="notif-time">ontem</div>
+        </div>
+      </div>
+      <div class="notif-row">
+        <div class="notif-icon notif-icon-error">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d63031" stroke-width="1.5" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-title">Treinamento obrigatório</div>
+          <div class="notif-sub">Conformidade e Código de Conduta deve ser concluído até 15/07.</div>
+          <div class="notif-time">2 dias atrás</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       9. PROFILE
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-profile">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header" style="padding-bottom:0;">
+      <div class="app-header-row">
+        <div class="app-header-side"></div>
+        <div class="app-header-center"></div>
+        <div class="app-header-side app-header-right">
+          <div class="hbtn" onclick="goTo('notifications')">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div class="hbtn" onclick="goTo('menu')">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="s-body" style="top:98px;">
+
+      <!-- Hero -->
+      <div class="profile-hero">
+        <div style="height:10px;"></div>
+        <div style="position:relative;margin-bottom:4px;">
+          <div class="profile-avatar"><span>AF</span></div>
+        </div>
+        <div class="profile-name">Ana Ferreira</div>
+        <div class="profile-role">Colaborador(a)</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:1px;">Imunologia Brasil · ana.ferreira@ucb.com.br</div>
+        <div class="profile-edit-btn" onclick="goTo('edit-profile')" style="cursor:pointer;margin-top:12px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar perfil
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:flex;background:white;border-bottom:1px solid var(--line);">
+        <div style="flex:1;text-align:center;padding:16px 8px;border-right:1px solid var(--line);">
+          <div style="font-size:22px;font-weight:700;color:var(--navy);">12</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Concluídos</div>
+        </div>
+        <div style="flex:1;text-align:center;padding:16px 8px;border-right:1px solid var(--line);">
+          <div style="font-size:22px;font-weight:700;color:var(--navy);">38h</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Assistidas</div>
+        </div>
+        <div style="flex:1;text-align:center;padding:16px 8px;">
+          <div style="font-size:22px;font-weight:700;color:var(--navy);">3</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Certificados</div>
+        </div>
+      </div>
+
+      <div style="height:20px;background:var(--silver);"></div>
+
+      <!-- Certificados -->
+      <div class="profile-section">
+        <div class="profile-section-label">Meus certificados</div>
+        <div class="profile-card">
+          <div class="profile-cert-row">
+            <div class="profile-cert-badge"><span>PDF</span></div>
+            <div class="profile-cert-info">
+              <div class="profile-cert-title">Nossas Pesquisas</div>
+              <div class="profile-cert-meta">Emitido 20 jun. 2026</div>
+              <div class="profile-cert-actions">
+                <span class="profile-cert-action">↓ Baixar</span>
+                <span class="profile-cert-action">↗ Compartilhar</span>
+              </div>
+            </div>
+          </div>
+          <div style="height:1px;background:var(--line);margin-left:16px;"></div>
+          <div class="profile-cert-row">
+            <div class="profile-cert-badge"><span>PDF</span></div>
+            <div class="profile-cert-info">
+              <div class="profile-cert-title">Seminário — Imunologia Clínica</div>
+              <div class="profile-cert-meta">Emitido 05 jun. 2026</div>
+              <div class="profile-cert-actions">
+                <span class="profile-cert-action">↓ Baixar</span>
+                <span class="profile-cert-action">↗ Compartilhar</span>
+              </div>
+            </div>
+          </div>
+          <div style="height:1px;background:var(--line);margin-left:16px;"></div>
+          <div class="profile-cert-row">
+            <div class="profile-cert-badge"><span>PDF</span></div>
+            <div class="profile-cert-info">
+              <div class="profile-cert-title">Institucional UCB</div>
+              <div class="profile-cert-meta">Emitido 12 mai. 2026</div>
+              <div class="profile-cert-actions">
+                <span class="profile-cert-action">↓ Baixar</span>
+                <span class="profile-cert-action">↗ Compartilhar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:20px;"></div>
+
+      <!-- Conta -->
+      <div class="profile-section">
+        <div class="profile-section-label">Conta</div>
+        <div class="profile-card">
+          <div class="profile-account-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="profile-account-text">Alterar senha</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div style="height:1px;background:var(--line);margin-left:16px;"></div>
+          <div class="profile-account-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="profile-account-text">Notificações</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div style="height:1px;background:var(--line);margin-left:16px;"></div>
+          <div class="profile-account-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span class="profile-account-text">Política de privacidade</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div style="height:1px;background:var(--line);margin-left:16px;"></div>
+          <div class="profile-account-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span class="profile-account-text">Termos de uso</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:20px;"></div>
+
+      <!-- Sair -->
+      <div class="profile-section">
+        <div class="profile-card">
+          <div class="profile-account-row" onclick="goTo('login')">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="1.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span style="font-size:15px;color:var(--error);">Sair</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:48px;"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       EDITAR PERFIL
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-edit-profile">
+    <div class="sbar" style="color:white;z-index:35;">
+      <span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side">
+          <div class="hbtn" onclick="goTo('profile')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          </div>
+        </div>
+        <div class="app-header-center"><div class="app-header-title">Editar perfil</div></div>
+        <div class="app-header-side app-header-right">
+          <span style="font-size:15px;font-weight:600;color:white;padding:8px;cursor:pointer;" onclick="goTo('profile')">Salvar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="s-body" style="top:110px;background:var(--silver);">
+      <div style="padding:28px 20px;display:flex;flex-direction:column;gap:28px;">
+
+        <!-- Avatar -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <div style="position:relative;cursor:pointer;" onclick="openAvatarSheet()">
+            <div style="width:88px;height:88px;border-radius:44px;background:var(--mid);display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:28px;font-weight:700;color:var(--navy);">AF</span>
+            </div>
+            <div style="position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:14px;background:var(--navy);border:2px solid var(--silver);display:flex;align-items:center;justify-content:center;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </div>
+          </div>
+          <span style="font-size:14px;font-weight:500;color:var(--teal);cursor:pointer;" onclick="openAvatarSheet()">Alterar foto</span>
+        </div>
+
+        <!-- Campos -->
+        <div style="display:flex;flex-direction:column;gap:24px;">
+
+          <!-- Nome -->
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <span style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Nome</span>
+            <input value="Ana Ferreira" style="font-size:16px;color:var(--ink);background:transparent;border:none;outline:none;padding:8px 0;font-family:'DM Sans',sans-serif;border-bottom:1.5px solid var(--ink2);width:100%;">
+          </div>
+
+          <!-- E-mail -->
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;">E-mail corporativo</span>
+            <div style="font-size:15px;color:var(--muted);padding:8px 0;border-bottom:1px dashed var(--line);">ana.ferreira@ucb.com.br</div>
+          </div>
+
+          <!-- Cargo -->
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;">Cargo (somente leitura)</span>
+            <div style="font-size:15px;color:var(--muted);padding:8px 0;border-bottom:1px dashed var(--line);">Colaborador(a)</div>
+          </div>
+
+          <!-- Departamento -->
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;">Departamento (somente leitura)</span>
+            <div style="font-size:15px;color:var(--muted);padding:8px 0;border-bottom:1px dashed var(--line);">Imunologia Brasil</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Sheet avatar -->
+    <div class="action-sheet-overlay" id="avatar-action-sheet" onclick="if(event.target===this)closeAvatarSheet()">
+      <div class="action-sheet">
+        <div class="action-sheet-group">
+          <div class="action-sheet-title">Alterar foto de perfil</div>
+          <button class="action-sheet-btn primary" onclick="closeAvatarSheet()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Tirar foto
+          </button>
+          <button class="action-sheet-btn primary" onclick="closeAvatarSheet()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Escolher da galeria
+          </button>
+        </div>
+        <button class="action-sheet-cancel" onclick="closeAvatarSheet()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════
+       RELATÓRIOS
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-relatorios">
+    <div class="sbar" style="color:white;z-index:35;"><span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side"></div>
+        <div class="app-header-center"><div class="app-header-title">Relatórios</div></div>
+        <div class="app-header-side app-header-right">
+          <div class="hbtn" onclick="goTo('notifications')"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+          <div class="hbtn" onclick="goTo('menu')"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-body" style="top:110px;background:var(--silver);">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:16px;padding-bottom:40px;">
+
+        <!-- Período + Departamento -->
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div style="display:flex;gap:6px;" id="periodo-chips">
+            <div class="rperiodo active" onclick="setRelPeriodo(this,'30')" style="padding:6px 14px;border-radius:9999px;background:var(--navy);color:white;font-size:13px;font-weight:600;cursor:pointer;">30d</div>
+            <div class="rperiodo" onclick="setRelPeriodo(this,'90')" style="padding:6px 14px;border-radius:9999px;background:white;border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;">90d</div>
+            <div class="rperiodo" onclick="setRelPeriodo(this,'365')" style="padding:6px 14px;border-radius:9999px;background:white;border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;">365d</div>
+          </div>
+          <div style="position:relative;">
+            <div onclick="toggleDeptMenu()" style="display:flex;align-items:center;gap:6px;background:white;border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;">
+              <span id="dept-label" style="font-size:13px;color:var(--muted);">Todos</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div id="dept-menu" style="display:none;position:absolute;right:0;top:38px;background:white;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;min-width:180px;overflow:hidden;">
+              <div onclick="selectDept(this,'Todos')" style="padding:12px 16px;font-size:13px;color:var(--ink);cursor:pointer;border-bottom:1px solid var(--line);" onmouseover="this.style.background='var(--silver)'" onmouseout="this.style.background='white'">Todos</div>
+              <div onclick="selectDept(this,'Imunologia Brasil')" style="padding:12px 16px;font-size:13px;color:var(--ink);cursor:pointer;border-bottom:1px solid var(--line);" onmouseover="this.style.background='var(--silver)'" onmouseout="this.style.background='white'">Imunologia Brasil</div>
+              <div onclick="selectDept(this,'Neurologia Global')" style="padding:12px 16px;font-size:13px;color:var(--ink);cursor:pointer;border-bottom:1px solid var(--line);" onmouseover="this.style.background='var(--silver)'" onmouseout="this.style.background='white'">Neurologia Global</div>
+              <div onclick="selectDept(this,'Oncologia Lat-Am')" style="padding:12px 16px;font-size:13px;color:var(--ink);cursor:pointer;border-bottom:1px solid var(--line);" onmouseover="this.style.background='var(--silver)'" onmouseout="this.style.background='white'">Oncologia Lat-Am</div>
+              <div onclick="selectDept(this,'Epilepsia Europa')" style="padding:12px 16px;font-size:13px;color:var(--ink);cursor:pointer;" onmouseover="this.style.background='var(--silver)'" onmouseout="this.style.background='white'">Epilepsia Europa</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI cards -->
+        <div style="display:flex;gap:10px;">
+          <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
+            <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Concluídos</span>
+            <span id="kpi-concluidos" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">47</span>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <svg id="kpi-c-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              <span id="kpi-c-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+12 vs ant.</span>
+            </div>
+          </div>
+          <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
+            <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Taxa</span>
+            <span id="kpi-taxa" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">78%</span>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <svg id="kpi-t-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              <span id="kpi-t-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+5% vs ant.</span>
+            </div>
+          </div>
+          <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
+            <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Horas</span>
+            <span id="kpi-horas" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">124h</span>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <svg id="kpi-h-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              <span id="kpi-h-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+8h vs ant.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico de barras -->
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;padding:16px;">
+          <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;">Conclusões por mês</div>
+          <div id="rel-chart" style="display:flex;align-items:flex-end;gap:8px;height:80px;padding-bottom:20px;position:relative;"></div>
+        </div>
+
+        <!-- Top treinamentos -->
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--line);">
+            <span style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Top treinamentos</span>
+          </div>
+          <div id="rel-top" style="display:flex;flex-direction:column;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       PERGUNTAS FREQUENTES
+  ══════════════════════════════ -->
+  <div class="screen off-right" id="s-perguntas">
+    <div class="sbar" style="color:white;z-index:35;"><span class="sbar-time">9:41</span>
+      <div class="sbar-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,.4)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-row">
+        <div class="app-header-side">
+          <div class="hbtn" onclick="goTo('menu')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+        </div>
+        <div class="app-header-center"><div class="app-header-title">Perguntas Frequentes</div></div>
+        <div class="app-header-side app-header-right"></div>
+      </div>
+    </div>
+    <div class="s-body" style="top:110px;background:var(--silver);">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:10px;padding-bottom:40px;">
+
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">Encontre respostas para as dúvidas mais comuns sobre o UCB Digital Training.</div>
+
+        <!-- FAQ item aberto -->
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;gap:12px;">
+            <span style="font-size:14px;font-weight:600;color:var(--ink);">Como acesso meus treinamentos?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </div>
+          <div style="padding:0 16px 16px;border-top:1px solid var(--line);">
+            <p style="font-size:13px;color:var(--ink2);line-height:1.6;margin-top:12px;">Na tela Home você encontra todos os treinamentos disponíveis para o seu perfil. Treinamentos obrigatórios aparecem destacados. Toque em qualquer card para acessar o conteúdo.</p>
+          </div>
+        </div>
+
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;gap:12px;">
+            <span style="font-size:14px;font-weight:500;color:var(--ink);">Como obtenho meu certificado?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;gap:12px;">
+            <span style="font-size:14px;font-weight:500;color:var(--ink);">O que é um treinamento obrigatório?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;gap:12px;">
+            <span style="font-size:14px;font-weight:500;color:var(--ink);">Como funciona a gravação de resposta no coaching?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;gap:12px;">
+            <span style="font-size:14px;font-weight:500;color:var(--ink);">Meu progresso é salvo automaticamente?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;gap:12px;">
+            <span style="font-size:14px;font-weight:500;color:var(--ink);">Como altero minha senha?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <div style="background:white;border:1px solid var(--line);border-radius:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;gap:12px;">
+            <span style="font-size:14px;font-weight:500;color:var(--ink);">Posso acessar os treinamentos sem internet?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <!-- Contato -->
+        <div style="background:var(--teal-soft);border:1px solid var(--teal);border-radius:12px;padding:16px;margin-top:6px;display:flex;align-items:center;gap:12px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--teal-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--teal-dark);">Ainda com dúvidas?</div>
+            <div style="font-size:12px;color:var(--teal-dark);margin-top:2px;">Fale com o suporte via Mensagens</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       MENU → HOME
+  ══════════════════════════════ -->
+  <div class="screen off-right drawer-screen" id="s-menu">
+    <div class="sbar" style="color:white;z-index:200;"><span class="sbar-time">9:41</span></div>
+    <div class="drawer-panel">
+      <div class="drawer-ring" style="width:160px;height:160px;top:-40px;right:-40px;"></div>
+      <div class="drawer-ring" style="width:200px;height:200px;bottom:60px;left:-60px;border-color:rgba(255,255,255,.05);"></div>
+      <div class="drawer-inner">
+        <div class="drawer-logo-row">
+          <div class="drawer-logo-text">UCB <div class="drawer-logo-dot"></div></div>
+        </div>
+        <div class="drawer-profile">
+          <div class="drawer-avatar-wrap"><span>A</span></div>
+          <div class="drawer-user-name">Ana Ferreira</div>
+          <div class="drawer-user-role">Colaborador(a)</div>
+          <div class="drawer-edit-btn" onclick="goTo('profile')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Perfil
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('home')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <span class="drawer-item-label">Home</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('coaching')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+            <span class="drawer-item-label">Gerenciar Conteúdo</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('downloads')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+            <span class="drawer-item-label">Downloads</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('messages')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="drawer-item-label">Mensagens</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('notifications')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+            <span class="drawer-item-label">Notificações</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('relatorios')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <span class="drawer-item-label">Relatórios</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('perguntas')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <span class="drawer-item-label">Perguntas</span>
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('login')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+            <span class="drawer-item-label">Sair</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       MENU → COACHING
+  ══════════════════════════════ -->
+  <div class="screen off-right drawer-screen" id="s-menu-coaching">
+    <div class="sbar" style="color:white;z-index:200;"><span class="sbar-time">9:41</span></div>
+    <div class="drawer-panel">
+      <div class="drawer-ring" style="width:160px;height:160px;top:-40px;right:-40px;"></div>
+      <div class="drawer-ring" style="width:200px;height:200px;bottom:60px;left:-60px;border-color:rgba(255,255,255,.05);"></div>
+      <div class="drawer-inner">
+        <div class="drawer-logo-row">
+          <div class="drawer-logo-text">UCB <div class="drawer-logo-dot"></div></div>
+        </div>
+        <div class="drawer-profile">
+          <div class="drawer-avatar-wrap"><span>A</span></div>
+          <div class="drawer-user-name">Ana Ferreira</div>
+          <div class="drawer-user-role">Colaborador(a)</div>
+          <div class="drawer-edit-btn" onclick="goTo('profile')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Perfil
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('home')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <span class="drawer-item-label">Home</span>
+          </div>
+          <div class="drawer-item active" onclick="goTo('coaching')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A79D" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+            <span class="drawer-item-label">Gerenciar Conteúdo</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('downloads')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+            <span class="drawer-item-label">Downloads</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('messages')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="drawer-item-label">Mensagens</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('notifications')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+            <span class="drawer-item-label">Notificações</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('relatorios')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <span class="drawer-item-label">Relatórios</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('perguntas')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <span class="drawer-item-label">Perguntas</span>
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('login')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+            <span class="drawer-item-label">Sair</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       MENU → MENSAGENS
+  ══════════════════════════════ -->
+  <div class="screen off-right drawer-screen" id="s-menu-messages">
+    <div class="sbar" style="color:white;z-index:200;"><span class="sbar-time">9:41</span></div>
+    <div class="drawer-panel">
+      <div class="drawer-ring" style="width:160px;height:160px;top:-40px;right:-40px;"></div>
+      <div class="drawer-ring" style="width:200px;height:200px;bottom:60px;left:-60px;border-color:rgba(255,255,255,.05);"></div>
+      <div class="drawer-inner">
+        <div class="drawer-logo-row">
+          <div class="drawer-logo-text">UCB <div class="drawer-logo-dot"></div></div>
+        </div>
+        <div class="drawer-profile">
+          <div class="drawer-avatar-wrap"><span>A</span></div>
+          <div class="drawer-user-name">Ana Ferreira</div>
+          <div class="drawer-user-role">Colaborador(a)</div>
+          <div class="drawer-edit-btn" onclick="goTo('profile')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Perfil
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('home')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <span class="drawer-item-label">Home</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('coaching')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+            <span class="drawer-item-label">Gerenciar Conteúdo</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('downloads')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+            <span class="drawer-item-label">Downloads</span>
+          </div>
+          <div class="drawer-item active" onclick="goTo('messages')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A79D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="drawer-item-label">Mensagens</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('notifications')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+            <span class="drawer-item-label">Notificações</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('relatorios')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <span class="drawer-item-label">Relatórios</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('perguntas')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <span class="drawer-item-label">Perguntas</span>
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('login')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+            <span class="drawer-item-label">Sair</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       MENU → NOTIFICAÇÕES
+  ══════════════════════════════ -->
+  <div class="screen off-right drawer-screen" id="s-menu-notifications">
+    <div class="sbar" style="color:white;z-index:200;"><span class="sbar-time">9:41</span></div>
+    <div class="drawer-panel">
+      <div class="drawer-ring" style="width:160px;height:160px;top:-40px;right:-40px;"></div>
+      <div class="drawer-ring" style="width:200px;height:200px;bottom:60px;left:-60px;border-color:rgba(255,255,255,.05);"></div>
+      <div class="drawer-inner">
+        <div class="drawer-logo-row">
+          <div class="drawer-logo-text">UCB <div class="drawer-logo-dot"></div></div>
+        </div>
+        <div class="drawer-profile">
+          <div class="drawer-avatar-wrap"><span>A</span></div>
+          <div class="drawer-user-name">Ana Ferreira</div>
+          <div class="drawer-user-role">Colaborador(a)</div>
+          <div class="drawer-edit-btn" onclick="goTo('profile')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Perfil
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('home')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <span class="drawer-item-label">Home</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('coaching')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+            <span class="drawer-item-label">Gerenciar Conteúdo</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('downloads')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+            <span class="drawer-item-label">Downloads</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('messages')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="drawer-item-label">Mensagens</span>
+          </div>
+          <div class="drawer-item active" onclick="goTo('notifications')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00A79D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+            <span class="drawer-item-label">Notificações</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('relatorios')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <span class="drawer-item-label">Relatórios</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('perguntas')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <span class="drawer-item-label">Perguntas</span>
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('login')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+            <span class="drawer-item-label">Sair</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       MENU → PERFIL
+  ══════════════════════════════ -->
+  <div class="screen off-right drawer-screen" id="s-menu-profile">
+    <div class="sbar" style="color:white;z-index:200;"><span class="sbar-time">9:41</span></div>
+    <div class="drawer-panel">
+      <div class="drawer-ring" style="width:160px;height:160px;top:-40px;right:-40px;"></div>
+      <div class="drawer-ring" style="width:200px;height:200px;bottom:60px;left:-60px;border-color:rgba(255,255,255,.05);"></div>
+      <div class="drawer-inner">
+        <div class="drawer-logo-row">
+          <div class="drawer-logo-text">UCB <div class="drawer-logo-dot"></div></div>
+        </div>
+        <div class="drawer-profile">
+          <div class="drawer-avatar-wrap" style="border-color:var(--teal);"><span>A</span></div>
+          <div class="drawer-user-name">Ana Ferreira</div>
+          <div class="drawer-user-role">Colaborador(a)</div>
+          <div class="drawer-edit-btn" style="border-color:var(--teal);background:rgba(0,167,157,.15);" onclick="goTo('profile')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00A79D" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span style="color:var(--teal);">Perfil</span>
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('home')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <span class="drawer-item-label">Home</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('coaching')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+            <span class="drawer-item-label">Gerenciar Conteúdo</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('downloads')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+            <span class="drawer-item-label">Downloads</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('messages')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="drawer-item-label">Mensagens</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('notifications')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+            <span class="drawer-item-label">Notificações</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('relatorios')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <span class="drawer-item-label">Relatórios</span>
+          </div>
+          <div class="drawer-item" onclick="goTo('perguntas')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <span class="drawer-item-label">Perguntas</span>
+          </div>
+        </div>
+        <div class="drawer-divider"></div>
+        <div class="drawer-menu-section">
+          <div class="drawer-item" onclick="goTo('login')">
+            <div class="drawer-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+            <span class="drawer-item-label">Sair</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /device -->
+
+<script>
+// ── RELATÓRIOS ────────────────────────────────────────
+const relData = {
+  '30': {
+    kpis: { concluidos:'47', cDelta:'+12 vs ant.', cUp:true, taxa:'78%', tDelta:'+5% vs ant.', tUp:true, horas:'124h', hDelta:'+8h vs ant.', hUp:true },
+    chart: [{l:'Jan',v:30},{l:'Fev',v:45},{l:'Mar',v:55},{l:'Abr',v:70},{l:'Mai',v:60},{l:'Jun',v:100}],
+    top: [{n:'Nossas Pesquisas',c:43,w:90},{n:'Seminário',c:33,w:70},{n:'Institucional',c:26,w:55},{n:'Treinamento',c:18,w:38}]
+  },
+  '90': {
+    kpis: { concluidos:'142', cDelta:'+31 vs ant.', cUp:true, taxa:'71%', tDelta:'+3% vs ant.', tUp:true, horas:'387h', hDelta:'+24h vs ant.', hUp:true },
+    chart: [{l:'Abr',v:40},{l:'Mai',v:55},{l:'Jun',v:70},{l:'Jul',v:85},{l:'Ago',v:65},{l:'Set',v:100}],
+    top: [{n:'Seminário',c:112,w:90},{n:'Nossas Pesquisas',c:87,w:72},{n:'Treinamento',c:64,w:55},{n:'Institucional',c:45,w:38}]
+  },
+  '365': {
+    kpis: { concluidos:'521', cDelta:'+98 vs ant.', cUp:true, taxa:'68%', tDelta:'-2% vs ant.', tUp:false, horas:'1.340h', hDelta:'+112h vs ant.', hUp:true },
+    chart: [{l:'Jan',v:25},{l:'Mar',v:40},{l:'Mai',v:55},{l:'Jul',v:70},{l:'Set',v:85},{l:'Dez',v:100}],
+    top: [{n:'Nossas Pesquisas',c:198,w:90},{n:'Institucional',c:154,w:72},{n:'Seminário',c:121,w:60},{n:'Treinamento',c:89,w:44}]
+  }
+};
+
+function renderRel(periodo) {
+  const d = relData[periodo];
+  const k = d.kpis;
+  const tealUp = `<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>`;
+  const mutedDown = `<polyline points="1 6 10.5 15.5 15.5 10.5 23 18"/><polyline points="17 18 23 18 23 12"/>`;
+
+  document.getElementById('kpi-concluidos').textContent = k.concluidos;
+  document.getElementById('kpi-c-delta').textContent = k.cDelta;
+  document.getElementById('kpi-c-delta').style.color = k.cUp ? 'var(--teal)' : 'var(--muted)';
+  document.getElementById('kpi-c-icon').innerHTML = k.cUp ? tealUp : mutedDown;
+  document.getElementById('kpi-c-icon').setAttribute('stroke', k.cUp ? 'var(--teal)' : 'var(--muted)');
+
+  document.getElementById('kpi-taxa').textContent = k.taxa;
+  document.getElementById('kpi-t-delta').textContent = k.tDelta;
+  document.getElementById('kpi-t-delta').style.color = k.tUp ? 'var(--teal)' : 'var(--muted)';
+  document.getElementById('kpi-t-icon').innerHTML = k.tUp ? tealUp : mutedDown;
+  document.getElementById('kpi-t-icon').setAttribute('stroke', k.tUp ? 'var(--teal)' : 'var(--muted)');
+
+  document.getElementById('kpi-horas').textContent = k.horas;
+  document.getElementById('kpi-h-delta').textContent = k.hDelta;
+  document.getElementById('kpi-h-delta').style.color = k.hUp ? 'var(--teal)' : 'var(--muted)';
+  document.getElementById('kpi-h-icon').innerHTML = k.hUp ? tealUp : mutedDown;
+  document.getElementById('kpi-h-icon').setAttribute('stroke', k.hUp ? 'var(--teal)' : 'var(--muted)');
+
+  // chart
+  const chart = document.getElementById('rel-chart');
+  chart.innerHTML = d.chart.map((b, i) => {
+    const isLast = i === d.chart.length - 1;
+    const op = isLast ? 1 : (0.2 + (i / (d.chart.length - 1)) * 0.5);
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;">
+      <div style="flex:1;display:flex;align-items:flex-end;width:100%;">
+        <div style="width:100%;height:${b.v}%;background:var(--navy);opacity:${op};border-radius:3px 3px 0 0;transition:height .4s ease;"></div>
+      </div>
+      <span style="font-size:9px;color:${isLast?'var(--navy)':'var(--muted)'};font-weight:${isLast?'600':'400'};position:absolute;bottom:0;">${b.l}</span>
+    </div>`;
+  }).join('');
+
+  // top
+  const top = document.getElementById('rel-top');
+  top.innerHTML = d.top.map((t, i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;${i < d.top.length-1?'border-bottom:1px solid var(--line);':''}">
+      <span style="font-size:13px;font-weight:700;color:var(--navy);width:16px;">${i+1}</span>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:500;color:var(--ink);">${t.n}</div>
+        <div style="height:4px;background:var(--line);border-radius:2px;margin-top:4px;">
+          <div style="height:4px;width:${t.w}%;background:var(--navy);opacity:${1 - i*0.15};border-radius:2px;transition:width .4s ease;"></div>
+        </div>
+      </div>
+      <span style="font-size:12px;color:var(--muted);">${t.c} conclusões</span>
+    </div>`).join('');
+}
+
+function setRelPeriodo(el, periodo) {
+  document.querySelectorAll('.rperiodo').forEach(c => {
+    c.style.background = 'white';
+    c.style.color = 'var(--muted)';
+    c.style.border = '1px solid var(--line)';
+    c.style.fontWeight = '500';
+  });
+  el.style.background = 'var(--navy)';
+  el.style.color = 'white';
+  el.style.border = 'none';
+  el.style.fontWeight = '600';
+  renderRel(periodo);
+}
+
+function toggleDeptMenu() {
+  const m = document.getElementById('dept-menu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectDept(el, name) {
+  document.getElementById('dept-label').textContent = name;
+  document.getElementById('dept-label').style.color = name === 'Todos' ? 'var(--muted)' : 'var(--navy)';
+  document.getElementById('dept-menu').style.display = 'none';
+}
+
+window.addEventListener('load', () => { renderRel('30'); });
+
+function updateNota(input) {
+  const pct = ((parseFloat(input.value) - 0) / 10) * 100;
+  input.style.background = `linear-gradient(to right, #001489 ${pct}%, var(--line) ${pct}%)`;
+  const tooltip = document.getElementById('nota-tooltip');
+  if (tooltip) {
+    tooltip.textContent = parseFloat(input.value).toFixed(1).replace('.', ',');
+    const thumbOffset = 10 - (pct / 100) * 20;
+    tooltip.style.left = `calc(${pct}% + ${thumbOffset}px)`;
+  }
+}
+window.addEventListener('load', () => {
+  const n = document.getElementById('nota-slider');
+  if (n) updateNota(n);
+});
+
+function openAvatarSheet() {
+  document.getElementById('avatar-action-sheet').classList.add('open');
+}
+function closeAvatarSheet() {
+  document.getElementById('avatar-action-sheet').classList.remove('open');
+}
+
+function openEvalSheet() {
+  const sheet = document.getElementById('eval-action-sheet');
+  // move o action sheet para dentro da tela correta
+  document.getElementById('s-coaching').appendChild(sheet);
+  sheet.classList.add('open');
+}
+function closeEvalSheet() {
+  document.getElementById('eval-action-sheet').classList.remove('open');
+}
+
+function openVideoSheet() {
+  document.getElementById('video-action-sheet').classList.add('open');
+}
+function closeVideoSheet() {
+  document.getElementById('video-action-sheet').classList.remove('open');
+}
+function handleVideoOverlayClick(e) {
+  if (e.target === document.getElementById('video-action-sheet')) closeVideoSheet();
+}
+
+function openActionSheet() {
+  document.getElementById('action-sheet').classList.add('open');
+}
+function closeActionSheet() {
+  document.getElementById('action-sheet').classList.remove('open');
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('action-sheet')) closeActionSheet();
+}
+
+function toggleFranquiaMenu() {
+  const menu = document.getElementById('franquia-menu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function addFranquia(optionEl) {
+  const name = optionEl.dataset.name;
+  const list = document.getElementById('franquia-list');
+
+  // evita duplicatas
+  const existing = [...list.querySelectorAll('.franquia-tag span')].map(s => s.textContent);
+  if (existing.includes(name)) { toggleFranquiaMenu(); return; }
+
+  const tag = document.createElement('div');
+  tag.className = 'franquia-tag';
+  tag.style.cssText = 'display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--line);border-radius:6px;padding:12px 14px;';
+  tag.innerHTML = `
+    <div onclick="removeFranquia(this)" style="width:20px;height:20px;border-radius:10px;background:var(--error);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+    <span style="font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.3px;">${name}</span>
+  `;
+  list.appendChild(tag);
+
+  // oculta opção no menu
+  optionEl.style.display = 'none';
+  toggleFranquiaMenu();
+}
+
+function removeFranquia(btnEl) {
+  const tag = btnEl.closest('.franquia-tag');
+  const name = tag.querySelector('span').textContent;
+  tag.remove();
+  // reexibe opção no menu
+  document.querySelectorAll('.franquia-option').forEach(o => {
+    if (o.dataset.name === name) o.style.display = 'flex';
+  });
+}
+
+function updateSlider(input) {
+  const min = parseFloat(input.min);
+  const max = parseFloat(input.max);
+  const val = parseFloat(input.value);
+  const pct = ((val - min) / (max - min)) * 100;
+  // update track fill
+  input.style.background = `linear-gradient(to right, #001489 ${pct}%, var(--line) ${pct}%)`;
+  // update tooltip
+  const tooltip = document.getElementById('slider-tooltip');
+  tooltip.textContent = val.toFixed(1).replace('.', ',');
+  // position tooltip over thumb (accounting for thumb radius ~10px)
+  const thumbOffset = 10 - (pct / 100) * 20;
+  tooltip.style.left = `calc(${pct}% + ${thumbOffset}px)`;
+}
+// init on load
+window.addEventListener('load', () => {
+  const s = document.getElementById('time-slider');
+  if (s) updateSlider(s);
+});
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const label = document.getElementById('toggle-label');
+  const icon = document.getElementById('toggle-icon');
+  const hidden = sb.classList.toggle('hidden');
+  label.textContent = hidden ? 'Mostrar menu' : 'Ocultar menu';
+  icon.style.transform = hidden ? 'scaleX(-1)' : '';
+}
+
+function contentFilter(el, status) {
+  document.querySelectorAll('#s-coaching .fchip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#content-list .content-row').forEach(row => {
+    const show = row.dataset.pub === status;
+    row.style.display = show ? 'flex' : 'none';
+    const sep = row.nextElementSibling;
+    if (sep && sep.tagName === 'DIV' && sep.style.height === '1px') {
+      sep.style.display = show ? 'block' : 'none';
+    }
+  });
+}
+
+const screens = ['role','login','forgot','menu','home','training','coaching','avaliar','create-training','downloads','relatorios','perguntas','messages','chat','notifications','profile','edit-profile'];
+let current = 'role';
+
+function goTo(name) {
+  if (name === current) return;
+  const prev = current;
+  current = name;
+
+  const prevEl = document.getElementById('s-'+prev);
+  const nextEl = document.getElementById('s-'+name);
+  if (!prevEl || !nextEl) return;
+
+  const prevIdx = screens.indexOf(prev);
+  const nextIdx = screens.indexOf(name);
+  const goingForward = nextIdx > prevIdx;
+
+  prevEl.classList.remove('off-right','off-left');
+  void prevEl.offsetWidth;
+  prevEl.classList.add(goingForward ? 'off-left' : 'off-right');
+
+  nextEl.classList.remove('off-left','off-right');
+  nextEl.style.transform = goingForward ? 'translateX(100%)' : 'translateX(-25%)';
+  nextEl.style.opacity = '0';
+  nextEl.style.pointerEvents = 'none';
+  void nextEl.offsetWidth;
+  nextEl.style.transition = 'transform .38s cubic-bezier(.4,0,.2,1), opacity .38s';
+  nextEl.style.transform = '';
+  nextEl.style.opacity = '';
+  setTimeout(() => { nextEl.style.pointerEvents = ''; nextEl.style.transition = ''; }, 420);
+
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  const pill = document.getElementById('pill-'+name);
+  if (pill) pill.classList.add('active');
+}
+
+// iOS: delegar todos os cliques via event delegation para garantir resposta ao touch
+document.addEventListener('DOMContentLoaded', () => {
+  // Converte todos onclick em touchstart também
+  document.body.addEventListener('touchstart', function(){}, {passive:true});
+
+  // Scroll suave em iOS para áreas scrolláveis
+  document.querySelectorAll('.s-body, .s-body *').forEach(el => {
+    el.style.webkitOverflowScrolling = 'touch';
+  });
+});
+</script>
+</body>
+</html>
