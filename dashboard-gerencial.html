@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCB Digital Training — Dashboard Gerencial</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#001489;--teal:#00A79D;--teal-soft:#e0f5f4;--teal-dark:#007a72;
+  --silver:#f4f5f8;--line:#e2e5ec;--ink:#10132b;--muted:#6b7280;--muted2:#9ca3af;
+  --warn:#e8900a;--error:#d63031;--white:#fff;
+  --df:#d63031;--dn:#e8900a;--nc:#b2dfdb;--cf:#00A79D;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--silver);color:var(--ink);min-height:100vh;}
+
+/* HEADER */
+.dash-header{background:linear-gradient(135deg,var(--navy) 0%,#002580 100%);padding:20px 32px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.18);}
+.dash-logo{display:flex;align-items:center;gap:12px;}
+.dash-logo-icon{width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.dash-logo-icon svg{opacity:.9;}
+.dash-title{font-size:18px;font-weight:700;color:white;line-height:1.1;}
+.dash-subtitle{font-size:12px;color:rgba(255,255,255,.6);margin-top:1px;}
+.dash-filters{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.period-btn{padding:7px 16px;border-radius:9999px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.7);cursor:pointer;transition:.15s;}
+.period-btn.active{background:white;color:var(--navy);border-color:white;}
+.dept-select{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:8px;padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:white;cursor:pointer;outline:none;}
+.dept-select option{background:var(--navy);color:white;}
+.print-btn{padding:7px 14px;border-radius:8px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s;}
+.print-btn:hover{background:rgba(255,255,255,.2);}
+
+/* MAIN */
+.dash-main{max-width:1440px;margin:0 auto;padding:24px 32px 48px;}
+
+/* SECTION TITLES */
+.section-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--line);}
+
+/* CARDS */
+.card{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.kpi-card{background:white;border:1px solid var(--line);border-radius:14px;padding:18px 20px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.kpi-value{font-size:32px;font-weight:700;color:var(--ink);line-height:1;}
+.kpi-delta{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;}
+.kpi-card.accent{background:linear-gradient(135deg,var(--navy) 0%,#002580 100%);}
+.kpi-card.accent .kpi-label{color:rgba(255,255,255,.6);}
+.kpi-card.accent .kpi-value{color:white;}
+
+/* TWO-COL GRID */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px;}
+.full{margin-bottom:24px;}
+
+/* CHART BAR */
+.bar-chart-wrap{display:flex;align-items:flex-end;gap:10px;height:120px;padding-bottom:24px;position:relative;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;}
+.bar-fill{width:100%;border-radius:5px 5px 0 0;transition:height .4s ease;}
+.bar-label{font-size:10px;color:var(--muted);position:absolute;bottom:0;}
+
+/* DIVERGING BAR */
+.div-row{padding:12px 20px;border-bottom:1px solid var(--line);}
+.div-row:last-child{border-bottom:none;}
+.div-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.div-name{font-size:13px;font-weight:600;color:var(--ink);}
+.div-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.div-cf{font-size:14px;font-weight:700;color:var(--teal);}
+.div-bar{position:relative;height:14px;border-radius:7px;overflow:hidden;background:#eef0f6;}
+.div-bar-inner{position:absolute;inset:0;display:flex;}
+.div-bar-center{position:absolute;left:50%;top:0;bottom:0;width:1.5px;background:rgba(0,0,0,.18);transform:translateX(-50%);}
+.div-footer{display:flex;justify-content:space-between;margin-top:4px;}
+.div-neg{font-size:10px;color:var(--dn);}
+.div-nc{font-size:10px;color:var(--muted2);}
+
+/* LEGEND */
+.div-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 20px;background:var(--silver);border-bottom:1px solid var(--line);font-size:10px;color:var(--muted);}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.leg-arrow{font-size:11px;font-weight:700;color:var(--muted2);}
+
+/* SCORE DIST */
+.dist-row{display:flex;align-items:center;gap:12px;padding:8px 0;}
+.dist-label{font-size:12px;color:var(--muted);width:130px;flex-shrink:0;}
+.dist-bar-wrap{flex:1;height:16px;border-radius:8px;overflow:hidden;background:var(--silver);}
+.dist-bar-fill{height:100%;border-radius:8px;transition:width .4s ease;}
+.dist-pct{font-size:13px;font-weight:700;width:44px;text-align:right;flex-shrink:0;}
+
+/* EQUIPE */
+.eq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:20px;}
+.eq-card{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;gap:14px;align-items:flex-start;}
+.eq-avatar{width:44px;height:44px;border-radius:22px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;font-weight:700;color:white;}
+.eq-name{font-size:14px;font-weight:600;color:var(--ink);}
+.eq-score{font-size:22px;font-weight:700;line-height:1;margin-top:2px;}
+.eq-status{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;}
+.eq-gap{font-size:11px;color:var(--error);margin-top:4px;}
+.eq-ok{font-size:11px;color:var(--teal);margin-top:4px;}
+
+/* TOP LIST */
+.top-row{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line);}
+.top-row:last-child{border-bottom:none;}
+.top-rank{font-size:14px;font-weight:700;color:var(--navy);width:20px;}
+.top-name{font-size:13px;font-weight:500;color:var(--ink);flex:1;}
+.top-bar-wrap{width:200px;height:6px;background:var(--line);border-radius:3px;}
+.top-bar-fill{height:100%;border-radius:3px;background:var(--navy);}
+.top-count{font-size:12px;color:var(--muted);width:100px;text-align:right;}
+
+/* MINI TABS */
+.card-tabs{display:flex;border-bottom:1px solid var(--line);}
+.card-tab{padding:12px 20px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;}
+.card-tab.active{color:var(--navy);border-bottom-color:var(--navy);}
+
+/* FLM/SLM person rows */
+.person-row{padding:10px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;}
+.person-row:last-child{border-bottom:none;}
+.person-avatar{width:32px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:white;}
+.person-name{font-size:13px;font-weight:600;color:var(--ink);}
+.person-linha{font-size:10px;color:var(--muted);}
+.person-cf{font-size:13px;font-weight:700;color:var(--teal);flex-shrink:0;width:54px;text-align:right;}
+.person-bars{flex:1;}
+
+/* GAP PANEL */
+.gap-panel{background:white;border:1px solid #ffd0cc;border-left:4px solid var(--error);border-radius:14px;overflow:hidden;margin-bottom:24px;}
+.gap-header{background:linear-gradient(90deg,#fff5f5 0%,white 80%);padding:14px 20px;border-bottom:1px solid #ffd0cc;display:flex;align-items:center;justify-content:space-between;}
+.gap-header-title{font-size:13px;font-weight:700;color:var(--error);display:flex;align-items:center;gap:8px;}
+.gap-badge{background:var(--error);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;}
+.gap-badge.ok{background:var(--teal);}
+.gap-summary{display:grid;grid-template-columns:repeat(3,1fr);}
+.gap-sum-card{padding:16px 20px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);}
+.gap-sum-card:last-child{border-right:none;}
+.gap-sum-num{font-size:30px;font-weight:700;line-height:1;}
+.gap-sum-label{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.gap-body{display:grid;grid-template-columns:1fr 1fr;}
+.gap-col{padding:16px 20px;}
+.gap-col:first-child{border-right:1px solid var(--line);}
+.gap-col-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;}
+.gap-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+.gap-item:last-child{border-bottom:none;}
+.gap-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.gap-item-name{font-size:12px;font-weight:600;color:var(--ink);}
+.gap-item-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.gap-item-pct{font-size:14px;font-weight:700;flex-shrink:0;}
+
+@media print{
+  .dash-header{position:relative;print-color-adjust:exact;}
+  .print-btn{display:none;}
+  .dash-filters .period-btn:not(.active){display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="dash-header">
+  <div class="dash-logo">
+    <div class="dash-logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+    </div>
+    <div>
+      <div class="dash-title">UCB Digital Training</div>
+      <div class="dash-subtitle">Dashboard Gerencial</div>
+    </div>
+  </div>
+  <div class="dash-filters">
+    <div style="display:flex;gap:6px;">
+      <button class="period-btn active" onclick="setPeriodo(this,'30')">30d</button>
+      <button class="period-btn" onclick="setPeriodo(this,'90')">90d</button>
+      <button class="period-btn" onclick="setPeriodo(this,'365')">365d</button>
+    </div>
+    <select class="dept-select" onchange="setDept(this.value)">
+      <option value="Todos">Todos os departamentos</option>
+      <option value="GDs Cosentyx">GDs Cosentyx</option>
+      <option value="GDs Cardio">GDs Cardio</option>
+      <option value="GDs Xolair">GDs Xolair</option>
+      <option value="GDs Neuro">GDs Neuro</option>
+      <option value="GDs Ofta">GDs Ofta</option>
+    </select>
+    <button class="print-btn" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir
+    </button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="dash-main">
+
+  <!-- PAINEL DE GAPS -->
+  <div class="gap-panel" id="gap-panel"></div>
+
+  <!-- KPIs -->
+  <div class="section-title">Visão Geral</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Concluídos</div>
+      <div class="kpi-value" id="kpi-concluidos">47</div>
+      <div class="kpi-delta">
+        <svg id="kpi-c-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <span id="kpi-c-delta" style="font-size:12px;color:var(--teal);">+12 vs ant.</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Taxa de Conclusão</div>
+      <div class="kpi-value" id="kpi-taxa">78%</div>
+      <div class="kpi-delta">
+        <svg id="kpi-t-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <span id="kpi-t-delta" style="font-size:12px;color:var(--teal);">+5% vs ant.</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Horas de Treinamento</div>
+      <div class="kpi-value" id="kpi-horas">124h</div>
+      <div class="kpi-delta">
+        <svg id="kpi-h-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <span id="kpi-h-delta" style="font-size:12px;color:var(--teal);">+8h vs ant.</span>
+      </div>
+    </div>
+    <div class="kpi-card accent">
+      <div class="kpi-label">Média Geral de Notas</div>
+      <div class="kpi-value" id="kpi-media">8.4</div>
+      <div class="kpi-delta" style="margin-top:8px;">
+        <div style="flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;">
+          <div id="kpi-media-bar" style="height:100%;background:var(--teal);border-radius:3px;width:84%;transition:width .4s;"></div>
+        </div>
+        <span style="font-size:11px;color:rgba(255,255,255,.7);">/ 10</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="two-col">
+
+    <!-- Conclusões por mês -->
+    <div class="card">
+      <div style="padding:16px 20px 4px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Conclusões por Mês</div>
+      <div style="padding:16px 20px 24px;">
+        <div class="bar-chart-wrap" id="chart-conclusoes"></div>
+      </div>
+    </div>
+
+    <!-- Distribuição de scores -->
+    <div class="card" style="padding:20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;">Distribuição de Avaliações</div>
+      <div id="chart-dist" style="display:flex;flex-direction:column;gap:12px;"></div>
+      <div style="margin-top:20px;">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Por Critério</div>
+        <div id="chart-criterios" style="display:flex;gap:12px;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOP TREINAMENTOS + EQUIPE RESUMO -->
+  <div class="two-col">
+
+    <div class="card">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Top Treinamentos</div>
+      <div id="top-list"></div>
+    </div>
+
+    <div class="card" style="padding:20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;">Resumo da Equipe</div>
+      <div id="equipe-resumo" style="display:flex;gap:10px;margin-bottom:16px;"></div>
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Por Treinamento (notas)</div>
+      <div id="notas-por-treinamento" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+
+  </div>
+
+  <!-- TD_5 DISCIPLINAS -->
+  <div class="section-title">TD_5 Disciplinas</div>
+  <div class="card full">
+    <div class="div-legend">
+      <span class="leg-arrow">◄</span>
+      <div style="width:10px;height:10px;border-radius:2px;background:var(--df);"></div><span>Discordo Fortemente</span>
+      <div style="width:10px;height:10px;border-radius:2px;background:var(--dn);"></div><span>Discordo/Neutro</span>
+      <span style="margin:0 4px;color:var(--muted2);">│ 50% │</span>
+      <div style="width:10px;height:10px;border-radius:2px;background:var(--nc);"></div><span>Neutro/Concordo</span>
+      <div style="width:10px;height:10px;border-radius:2px;background:var(--cf);"></div><span>Concordo Fortemente</span>
+      <span class="leg-arrow">►</span>
+    </div>
+    <div id="td5-rows"></div>
+  </div>
+
+  <!-- NOTAS FLM + NOTAS SLM -->
+  <div class="section-title">Notas FLM &amp; Notas SLM</div>
+  <div class="two-col">
+
+    <div class="card">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;font-weight:700;color:var(--ink);">Notas FLM</span>
+        <span style="font-size:11px;color:var(--muted);">ordenado por CF% ↓</span>
+      </div>
+      <div style="padding:6px 20px 4px;" class="div-legend" style="border-bottom:none;background:transparent;padding:6px 20px;">
+        <span class="leg-arrow" style="font-size:10px;">◄</span>
+        <div style="width:8px;height:8px;border-radius:2px;background:var(--df);"></div><span style="font-size:10px;">DF</span>
+        <div style="width:8px;height:8px;border-radius:2px;background:var(--dn);"></div><span style="font-size:10px;">DN</span>
+        <span style="font-size:9px;color:var(--muted2);">│50%│</span>
+        <div style="width:8px;height:8px;border-radius:2px;background:var(--nc);"></div><span style="font-size:10px;">NC</span>
+        <div style="width:8px;height:8px;border-radius:2px;background:var(--cf);"></div><span style="font-size:10px;">CF</span>
+        <span class="leg-arrow" style="font-size:10px;">►</span>
+      </div>
+      <div id="flm-rows" style="max-height:480px;overflow-y:auto;"></div>
+    </div>
+
+    <div class="card">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;font-weight:700;color:var(--ink);">Notas SLM</span>
+        <span style="font-size:11px;color:var(--muted);">ordenado por CF% ↓</span>
+      </div>
+      <div style="padding:6px 20px 4px;" class="div-legend" style="border-bottom:none;background:transparent;">
+        <span class="leg-arrow" style="font-size:10px;">◄</span>
+        <div style="width:8px;height:8px;border-radius:2px;background:var(--df);"></div><span style="font-size:10px;">DF</span>
+        <div style="width:8px;height:8px;border-radius:2px;background:var(--dn);"></div><span style="font-size:10px;">DN</span>
+        <span style="font-size:9px;color:var(--muted2);">│50%│</span>
+        <div style="width:8px;height:8px;border-radius:2px;background:var(--nc);"></div><span style="font-size:10px;">NC</span>
+        <div style="width:8px;height:8px;border-radius:2px;background:var(--cf);"></div><span style="font-size:10px;">CF</span>
+        <span class="leg-arrow" style="font-size:10px;">►</span>
+      </div>
+      <div id="slm-rows" style="max-height:480px;overflow-y:auto;"></div>
+    </div>
+
+  </div>
+
+  <!-- TD_SUB COMPET -->
+  <div class="section-title">TD_Sub Competências</div>
+  <div class="card full">
+    <div class="div-legend">
+      <span class="leg-arrow">◄</span>
+      <div style="width:10px;height:10px;border-radius:2px;background:var(--df);"></div><span>Discordo Fortemente</span>
+      <div style="width:10px;height:10px;border-radius:2px;background:var(--dn);"></div><span>Discordo/Neutro</span>
+      <span style="margin:0 4px;color:var(--muted2);">│ 50% │</span>
+      <div style="width:10px;height:10px;border-radius:2px;background:var(--nc);"></div><span>Neutro/Concordo</span>
+      <div style="width:10px;height:10px;border-radius:2px;background:var(--cf);"></div><span>Concordo Fortemente</span>
+      <span class="leg-arrow">►</span>
+      <span style="margin-left:auto;font-size:10px;color:var(--muted2);">⚠ destaque = CF &lt; 60%</span>
+    </div>
+    <div id="subcomp-rows" style="display:grid;grid-template-columns:1fr 1fr;"></div>
+  </div>
+
+  <!-- EQUIPE DETALHADA -->
+  <div class="section-title">Equipe</div>
+  <div class="card full">
+    <div class="eq-grid" id="equipe-cards"></div>
+  </div>
+
+</div>
+
+<script>
+// ── ESTADO ────────────────────────────────────────────
+let activePeriodo = '30';
+let activeDept = 'Todos';
+
+// ── DADOS: GERAL ──────────────────────────────────────
+const relData = {
+  '30': {
+    kpis: {concluidos:'47',cDelta:'+12 vs ant.',cUp:true,taxa:'78%',tDelta:'+5% vs ant.',tUp:true,horas:'124h',hDelta:'+8h vs ant.',hUp:true},
+    chart: [{l:'Jan',v:30},{l:'Fev',v:45},{l:'Mar',v:55},{l:'Abr',v:70},{l:'Mai',v:60},{l:'Jun',v:100}],
+    top: [{n:'Nossas Pesquisas',c:43,w:90},{n:'Seminário',c:33,w:70},{n:'Institucional',c:26,w:55},{n:'Treinamento',c:18,w:38}]
+  },
+  '90': {
+    kpis: {concluidos:'142',cDelta:'+31 vs ant.',cUp:true,taxa:'71%',tDelta:'+3% vs ant.',tUp:true,horas:'387h',hDelta:'+24h vs ant.',hUp:true},
+    chart: [{l:'Abr',v:40},{l:'Mai',v:55},{l:'Jun',v:70},{l:'Jul',v:85},{l:'Ago',v:65},{l:'Set',v:100}],
+    top: [{n:'Seminário',c:112,w:90},{n:'Nossas Pesquisas',c:87,w:72},{n:'Treinamento',c:64,w:55},{n:'Institucional',c:45,w:38}]
+  },
+  '365': {
+    kpis: {concluidos:'521',cDelta:'+98 vs ant.',cUp:true,taxa:'68%',tDelta:'-2% vs ant.',tUp:false,horas:'1.340h',hDelta:'+112h vs ant.',hUp:true},
+    chart: [{l:'Jan',v:25},{l:'Mar',v:40},{l:'Mai',v:55},{l:'Jul',v:70},{l:'Set',v:85},{l:'Dez',v:100}],
+    top: [{n:'Nossas Pesquisas',c:198,w:90},{n:'Institucional',c:154,w:72},{n:'Seminário',c:121,w:60},{n:'Treinamento',c:89,w:44}]
+  }
+};
+
+// ── DADOS: NOTAS ──────────────────────────────────────
+const notasData = {
+  '30': {
+    media:'8.4', mediaBar:84,
+    dist:[{label:'Concordo Fortemente',pct:62,color:'var(--cf)'},{label:'Neutro/Concordo',pct:28,color:'var(--nc)'},{label:'Discordo/Neutro',pct:8,color:'var(--dn)'},{label:'Discordo Fort.',pct:2,color:'var(--df)'}],
+    criterios:[{nome:'Compreensão',media:8.7},{nome:'Aplicação',media:8.1},{nome:'Plano de Evolução',media:8.3}],
+    treinamentos:[{nome:'Compliance',media:9.1},{nome:'Nossas Pesquisas',media:8.9},{nome:'Field Coaching',media:7.2},{nome:'Objeções',media:6.8}]
+  },
+  '90': {
+    media:'7.9', mediaBar:79,
+    dist:[{label:'Concordo Fortemente',pct:48,color:'var(--cf)'},{label:'Neutro/Concordo',pct:35,color:'var(--nc)'},{label:'Discordo/Neutro',pct:14,color:'var(--dn)'},{label:'Discordo Fort.',pct:3,color:'var(--df)'}],
+    criterios:[{nome:'Compreensão',media:8.2},{nome:'Aplicação',media:7.6},{nome:'Plano de Evolução',media:7.9}],
+    treinamentos:[{nome:'Compliance',media:8.7},{nome:'Nossas Pesquisas',media:8.4},{nome:'Field Coaching',media:7.0},{nome:'Objeções',media:6.5}]
+  },
+  '365': {
+    media:'7.6', mediaBar:76,
+    dist:[{label:'Concordo Fortemente',pct:43,color:'var(--cf)'},{label:'Neutro/Concordo',pct:38,color:'var(--nc)'},{label:'Discordo/Neutro',pct:16,color:'var(--dn)'},{label:'Discordo Fort.',pct:3,color:'var(--df)'}],
+    criterios:[{nome:'Compreensão',media:7.9},{nome:'Aplicação',media:7.3},{nome:'Plano de Evolução',media:7.6}],
+    treinamentos:[{nome:'Compliance',media:8.5},{nome:'Nossas Pesquisas',media:8.1},{nome:'Field Coaching',media:6.8},{nome:'Objeções',media:6.4}]
+  }
+};
+
+// ── DADOS: TD_5 DISCIPLINAS ───────────────────────────
+const td5discData = {
+  '30': [
+    {nome:'Aderência a Processos',       df:0, dn:1, nc:18, cf:81},
+    {nome:'Padrões de Qualidade e Time', df:0, dn:2, nc:31, cf:67},
+    {nome:'Coaching',                    df:0, dn:6, nc:36, cf:58},
+    {nome:'Maximização de Performance',  df:0, dn:5, nc:42, cf:53},
+    {nome:'Ritmo de Gestão',             df:1, dn:6, nc:41, cf:52},
+  ],
+  '90': [
+    {nome:'Aderência a Processos',       df:0, dn:2, nc:19, cf:79},
+    {nome:'Padrões de Qualidade e Time', df:0, dn:3, nc:33, cf:64},
+    {nome:'Coaching',                    df:1, dn:7, nc:37, cf:55},
+    {nome:'Maximização de Performance',  df:1, dn:6, nc:44, cf:49},
+    {nome:'Ritmo de Gestão',             df:1, dn:7, nc:43, cf:49},
+  ],
+  '365': [
+    {nome:'Aderência a Processos',       df:0, dn:3, nc:21, cf:76},
+    {nome:'Padrões de Qualidade e Time', df:1, dn:4, nc:35, cf:60},
+    {nome:'Coaching',                    df:1, dn:8, nc:39, cf:52},
+    {nome:'Maximização de Performance',  df:1, dn:7, nc:45, cf:47},
+    {nome:'Ritmo de Gestão',             df:2, dn:8, nc:44, cf:46},
+  ]
+};
+
+// ── DADOS: TD_SUB COMPET ──────────────────────────────
+const tdSubcompData = {
+  '30': [
+    {nome:'Compliance',                        disc:'Padrões Q&T',         df:0,dn:0, nc:7, cf:93},
+    {nome:'Advoga Aderência aos Processos',     disc:'Aderência',           df:0,dn:1, nc:24,cf:75},
+    {nome:'Compreende o Proc. Promocional',     disc:'Aderência',           df:0,dn:1, nc:26,cf:73},
+    {nome:'É um exemplo em valores',            disc:'Padrões Q&T',         df:1,dn:5, nc:25,cf:69},
+    {nome:'Define claramente não negociáveis',  disc:'Padrões Q&T',         df:0,dn:3, nc:31,cf:66},
+    {nome:'Liderando Mudanças (Digital)',        disc:'Padrões Q&T',         df:0,dn:2, nc:32,cf:66},
+    {nome:'Fomenta cultura de desenvolvimento',disc:'Coaching',             df:1,dn:8, nc:25,cf:66},
+    {nome:'Sabe se relacionar com clientes',    disc:'Coaching',             df:0,dn:5, nc:30,cf:65},
+    {nome:'Promove trabalho em equipe',         disc:'Padrões Q&T',         df:0,dn:5, nc:30,cf:65},
+    {nome:'Define objetivos de forma SMART',    disc:'Max. Performance',    df:0,dn:3, nc:34,cf:63},
+    {nome:'Efetividade do Coaching',            disc:'Coaching',             df:1,dn:5, nc:31,cf:63},
+    {nome:'Fornece Coaching',                   disc:'Coaching',             df:0,dn:4, nc:35,cf:61},
+    {nome:'Intervém rápido e frequentemente',  disc:'Max. Performance',    df:0,dn:5, nc:34,cf:61},
+    {nome:'Efetividade do Ritmo de Gestão',     disc:'Ritmo de Gestão',     df:0,dn:5, nc:34,cf:61},
+    {nome:'Efetividade das Reuniões de Gestão', disc:'Ritmo de Gestão',     df:0,dn:7, nc:36,cf:57},
+    {nome:'Faz acompanhamento detalhado',       disc:'Max. Performance',    df:0,dn:6, nc:37,cf:57},
+    {nome:'Consistência do Ritmo de Gestão',    disc:'Ritmo de Gestão',     df:1,dn:7, nc:44,cf:48},
+  ],
+  '90': [
+    {nome:'Compliance',                        disc:'Padrões Q&T',         df:0,dn:0, nc:8, cf:92},
+    {nome:'Advoga Aderência aos Processos',     disc:'Aderência',           df:0,dn:2, nc:26,cf:72},
+    {nome:'Compreende o Proc. Promocional',     disc:'Aderência',           df:0,dn:2, nc:28,cf:70},
+    {nome:'É um exemplo em valores',            disc:'Padrões Q&T',         df:1,dn:6, nc:27,cf:66},
+    {nome:'Define claramente não negociáveis',  disc:'Padrões Q&T',         df:0,dn:4, nc:33,cf:63},
+    {nome:'Liderando Mudanças (Digital)',        disc:'Padrões Q&T',         df:0,dn:3, nc:34,cf:63},
+    {nome:'Fomenta cultura de desenvolvimento',disc:'Coaching',             df:1,dn:9, nc:27,cf:63},
+    {nome:'Sabe se relacionar com clientes',    disc:'Coaching',             df:0,dn:6, nc:32,cf:62},
+    {nome:'Promove trabalho em equipe',         disc:'Padrões Q&T',         df:1,dn:6, nc:32,cf:61},
+    {nome:'Define objetivos de forma SMART',    disc:'Max. Performance',    df:0,dn:4, nc:36,cf:60},
+    {nome:'Efetividade do Coaching',            disc:'Coaching',             df:1,dn:6, nc:33,cf:60},
+    {nome:'Fornece Coaching',                   disc:'Coaching',             df:0,dn:5, nc:37,cf:58},
+    {nome:'Intervém rápido e frequentemente',  disc:'Max. Performance',    df:1,dn:6, nc:36,cf:57},
+    {nome:'Efetividade do Ritmo de Gestão',     disc:'Ritmo de Gestão',     df:0,dn:6, nc:36,cf:58},
+    {nome:'Efetividade das Reuniões de Gestão', disc:'Ritmo de Gestão',     df:1,dn:8, nc:38,cf:53},
+    {nome:'Faz acompanhamento detalhado',       disc:'Max. Performance',    df:1,dn:7, nc:39,cf:53},
+    {nome:'Consistência do Ritmo de Gestão',    disc:'Ritmo de Gestão',     df:2,dn:8, nc:45,cf:45},
+  ],
+  '365': [
+    {nome:'Compliance',                        disc:'Padrões Q&T',         df:0,dn:0, nc:9, cf:91},
+    {nome:'Advoga Aderência aos Processos',     disc:'Aderência',           df:0,dn:3, nc:28,cf:69},
+    {nome:'Compreende o Proc. Promocional',     disc:'Aderência',           df:0,dn:3, nc:30,cf:67},
+    {nome:'É um exemplo em valores',            disc:'Padrões Q&T',         df:2,dn:7, nc:29,cf:62},
+    {nome:'Define claramente não negociáveis',  disc:'Padrões Q&T',         df:1,dn:5, nc:35,cf:59},
+    {nome:'Liderando Mudanças (Digital)',        disc:'Padrões Q&T',         df:0,dn:4, nc:36,cf:60},
+    {nome:'Fomenta cultura de desenvolvimento',disc:'Coaching',             df:2,dn:10,nc:29,cf:59},
+    {nome:'Sabe se relacionar com clientes',    disc:'Coaching',             df:1,dn:7, nc:34,cf:58},
+    {nome:'Promove trabalho em equipe',         disc:'Padrões Q&T',         df:2,dn:7, nc:34,cf:57},
+    {nome:'Define objetivos de forma SMART',    disc:'Max. Performance',    df:1,dn:5, nc:38,cf:56},
+    {nome:'Efetividade do Coaching',            disc:'Coaching',             df:2,dn:7, nc:35,cf:56},
+    {nome:'Fornece Coaching',                   disc:'Coaching',             df:1,dn:6, nc:39,cf:54},
+    {nome:'Intervém rápido e frequentemente',  disc:'Max. Performance',    df:2,dn:7, nc:38,cf:53},
+    {nome:'Efetividade do Ritmo de Gestão',     disc:'Ritmo de Gestão',     df:1,dn:7, nc:38,cf:54},
+    {nome:'Efetividade das Reuniões de Gestão', disc:'Ritmo de Gestão',     df:2,dn:9, nc:40,cf:49},
+    {nome:'Faz acompanhamento detalhado',       disc:'Max. Performance',    df:2,dn:8, nc:41,cf:49},
+    {nome:'Consistência do Ritmo de Gestão',    disc:'Ritmo de Gestão',     df:3,dn:9, nc:46,cf:42},
+  ]
+};
+
+// ── DADOS: NOTAS FLM ──────────────────────────────────
+const notasFLMData = {
+  '30': [
+    {nome:'Janderson Pereira', linha:'GDs Xolair',   df:0,dn:1, nc:21,cf:78},
+    {nome:'Marcos Kuriu',      linha:'GDs Xolair',   df:0,dn:2, nc:21,cf:77},
+    {nome:'Adriana Moraes',    linha:'GDs Cosentyx', df:0,dn:2, nc:24,cf:74},
+    {nome:'Thais Abud',        linha:'GDs Ofta',     df:0,dn:2, nc:28,cf:70},
+    {nome:'Alexandre Bado',    linha:'GDs Cosentyx', df:0,dn:2, nc:32,cf:66},
+    {nome:'Fabiano Silva',     linha:'GDs Cardio',   df:0,dn:3, nc:33,cf:64},
+    {nome:'Tereza Ferreira',   linha:'GDs Cardio',   df:0,dn:3, nc:34,cf:63},
+    {nome:'Felipe Lima',       linha:'GDs Cosentyx', df:0,dn:8, nc:30,cf:62},
+    {nome:'Vlamir Galembeck',  linha:'GDs Cardio',   df:0,dn:5, nc:33,cf:62},
+    {nome:'Eduardo França',    linha:'GDs Cosentyx', df:0,dn:4, nc:35,cf:61},
+    {nome:'Paulo Rodrigues',   linha:'GDs Cosentyx', df:0,dn:4, nc:35,cf:61},
+    {nome:'Jorge Delamare',    linha:'GDs Cardio',   df:0,dn:5, nc:35,cf:60},
+    {nome:'Claudio Moura',     linha:'GDs Cardio',   df:0,dn:4, nc:38,cf:58},
+    {nome:'Patricia Carlo',    linha:'GDs Cosentyx', df:0,dn:6, nc:36,cf:58},
+    {nome:'Alexandre Cavada',  linha:'GDs Neuro',    df:0,dn:5, nc:38,cf:57},
+    {nome:'Ana Carolina R.',   linha:'GDs Cardio',   df:1,dn:6, nc:38,cf:55},
+    {nome:'Marcelo Andrade',   linha:'GDs Cosentyx', df:1,dn:5, nc:40,cf:54},
+    {nome:'Sergio Nunes',      linha:'GDs Xolair',   df:1,dn:7, nc:40,cf:52},
+  ],
+  '90': [
+    {nome:'Janderson Pereira', linha:'GDs Xolair',   df:0,dn:2, nc:22,cf:76},
+    {nome:'Marcos Kuriu',      linha:'GDs Xolair',   df:0,dn:2, nc:23,cf:75},
+    {nome:'Adriana Moraes',    linha:'GDs Cosentyx', df:0,dn:3, nc:26,cf:71},
+    {nome:'Thais Abud',        linha:'GDs Ofta',     df:0,dn:3, nc:29,cf:68},
+    {nome:'Alexandre Bado',    linha:'GDs Cosentyx', df:0,dn:3, nc:34,cf:63},
+    {nome:'Fabiano Silva',     linha:'GDs Cardio',   df:0,dn:4, nc:35,cf:61},
+    {nome:'Tereza Ferreira',   linha:'GDs Cardio',   df:0,dn:4, nc:35,cf:61},
+    {nome:'Eduardo França',    linha:'GDs Cosentyx', df:0,dn:5, nc:37,cf:58},
+    {nome:'Paulo Rodrigues',   linha:'GDs Cosentyx', df:0,dn:5, nc:37,cf:58},
+    {nome:'Vlamir Galembeck',  linha:'GDs Cardio',   df:0,dn:6, nc:35,cf:59},
+    {nome:'Felipe Lima',       linha:'GDs Cosentyx', df:1,dn:9, nc:32,cf:58},
+    {nome:'Jorge Delamare',    linha:'GDs Cardio',   df:0,dn:6, nc:37,cf:57},
+    {nome:'Claudio Moura',     linha:'GDs Cardio',   df:0,dn:5, nc:39,cf:56},
+    {nome:'Patricia Carlo',    linha:'GDs Cosentyx', df:0,dn:7, nc:37,cf:56},
+    {nome:'Alexandre Cavada',  linha:'GDs Neuro',    df:1,dn:6, nc:40,cf:53},
+    {nome:'Ana Carolina R.',   linha:'GDs Cardio',   df:1,dn:7, nc:39,cf:53},
+    {nome:'Marcelo Andrade',   linha:'GDs Cosentyx', df:1,dn:6, nc:41,cf:52},
+    {nome:'Sergio Nunes',      linha:'GDs Xolair',   df:1,dn:8, nc:42,cf:49},
+  ],
+  '365': [
+    {nome:'Janderson Pereira', linha:'GDs Xolair',   df:0,dn:2, nc:24,cf:74},
+    {nome:'Marcos Kuriu',      linha:'GDs Xolair',   df:0,dn:3, nc:25,cf:72},
+    {nome:'Adriana Moraes',    linha:'GDs Cosentyx', df:0,dn:4, nc:28,cf:68},
+    {nome:'Thais Abud',        linha:'GDs Ofta',     df:0,dn:4, nc:31,cf:65},
+    {nome:'Alexandre Bado',    linha:'GDs Cosentyx', df:0,dn:4, nc:36,cf:60},
+    {nome:'Fabiano Silva',     linha:'GDs Cardio',   df:0,dn:5, nc:37,cf:58},
+    {nome:'Tereza Ferreira',   linha:'GDs Cardio',   df:0,dn:5, nc:37,cf:58},
+    {nome:'Eduardo França',    linha:'GDs Cosentyx', df:1,dn:6, nc:38,cf:55},
+    {nome:'Paulo Rodrigues',   linha:'GDs Cosentyx', df:1,dn:6, nc:38,cf:55},
+    {nome:'Vlamir Galembeck',  linha:'GDs Cardio',   df:1,dn:7, nc:37,cf:55},
+    {nome:'Claudio Moura',     linha:'GDs Cardio',   df:1,dn:6, nc:40,cf:53},
+    {nome:'Patricia Carlo',    linha:'GDs Cosentyx', df:1,dn:8, nc:38,cf:53},
+    {nome:'Jorge Delamare',    linha:'GDs Cardio',   df:1,dn:7, nc:38,cf:54},
+    {nome:'Felipe Lima',       linha:'GDs Cosentyx', df:1,dn:10,nc:34,cf:55},
+    {nome:'Alexandre Cavada',  linha:'GDs Neuro',    df:1,dn:7, nc:41,cf:51},
+    {nome:'Ana Carolina R.',   linha:'GDs Cardio',   df:2,dn:8, nc:40,cf:50},
+    {nome:'Marcelo Andrade',   linha:'GDs Cosentyx', df:2,dn:7, nc:42,cf:49},
+    {nome:'Sergio Nunes',      linha:'GDs Xolair',   df:2,dn:9, nc:43,cf:46},
+  ]
+};
+
+// ── DADOS: NOTAS SLM ──────────────────────────────────
+const notasSLMData = {
+  '30': [
+    {nome:'Rafael Cunha',     linha:'GRs Cosentyx',    df:0,dn:6, nc:28,cf:66},
+    {nome:'Eduardo Rainer',   linha:'GNV Acesso Clin', df:0,dn:12,nc:22,cf:66},
+    {nome:'Rafael Santos',    linha:'GRs Ofta',        df:0,dn:14,nc:22,cf:64},
+    {nome:'Elenise Colletti', linha:'GNV Acesso Pub',  df:0,dn:8, nc:30,cf:62},
+    {nome:'Marcelo Alves',    linha:'GNV Acesso HMO',  df:0,dn:5, nc:35,cf:60},
+    {nome:'Antonio Alex R.',  linha:'GRs Cosentyx',    df:0,dn:3, nc:38,cf:59},
+    {nome:'Leonardo Almeida', linha:'GRs Cardio',      df:0,dn:10,nc:35,cf:55},
+  ],
+  '90': [
+    {nome:'Rafael Cunha',     linha:'GRs Cosentyx',    df:0,dn:7, nc:30,cf:63},
+    {nome:'Eduardo Rainer',   linha:'GNV Acesso Clin', df:1,dn:13,nc:24,cf:62},
+    {nome:'Rafael Santos',    linha:'GRs Ofta',        df:1,dn:15,nc:24,cf:60},
+    {nome:'Elenise Colletti', linha:'GNV Acesso Pub',  df:0,dn:9, nc:32,cf:59},
+    {nome:'Marcelo Alves',    linha:'GNV Acesso HMO',  df:0,dn:6, nc:37,cf:57},
+    {nome:'Antonio Alex R.',  linha:'GRs Cosentyx',    df:1,dn:4, nc:40,cf:55},
+    {nome:'Leonardo Almeida', linha:'GRs Cardio',      df:1,dn:11,nc:37,cf:51},
+  ],
+  '365': [
+    {nome:'Rafael Cunha',     linha:'GRs Cosentyx',    df:1,dn:8, nc:32,cf:59},
+    {nome:'Eduardo Rainer',   linha:'GNV Acesso Clin', df:1,dn:14,nc:26,cf:59},
+    {nome:'Rafael Santos',    linha:'GRs Ofta',        df:2,dn:16,nc:26,cf:56},
+    {nome:'Elenise Colletti', linha:'GNV Acesso Pub',  df:1,dn:10,nc:34,cf:55},
+    {nome:'Marcelo Alves',    linha:'GNV Acesso HMO',  df:0,dn:7, nc:39,cf:54},
+    {nome:'Antonio Alex R.',  linha:'GRs Cosentyx',    df:1,dn:5, nc:42,cf:52},
+    {nome:'Leonardo Almeida', linha:'GRs Cardio',      df:2,dn:12,nc:39,cf:47},
+  ]
+};
+
+// ── DADOS: EQUIPE ─────────────────────────────────────
+const equipeData = {
+  '30': [
+    {nome:'Beatriz Lima',  media:9.2,gap:null},
+    {nome:'Ana Ferreira',  media:8.7,gap:null},
+    {nome:'Carlos Melo',   media:8.1,gap:null},
+    {nome:'Rafael Torres', media:7.4,gap:'Aplicação Prática'},
+    {nome:'Juliana Souza', media:6.9,gap:'Plano de Evolução'},
+    {nome:'Pedro Alves',   media:5.8,gap:'Compreensão · Plano de Evolução'},
+  ],
+  '90': [
+    {nome:'Beatriz Lima',  media:8.9,gap:null},
+    {nome:'Ana Ferreira',  media:8.3,gap:null},
+    {nome:'Carlos Melo',   media:7.8,gap:'Aplicação Prática'},
+    {nome:'Rafael Torres', media:7.1,gap:'Aplicação Prática'},
+    {nome:'Juliana Souza', media:6.5,gap:'Plano de Evolução'},
+    {nome:'Pedro Alves',   media:5.4,gap:'Compreensão · Plano de Evolução'},
+  ],
+  '365': [
+    {nome:'Beatriz Lima',  media:8.6,gap:null},
+    {nome:'Ana Ferreira',  media:8.0,gap:null},
+    {nome:'Carlos Melo',   media:7.5,gap:'Aplicação Prática'},
+    {nome:'Rafael Torres', media:6.8,gap:'Aplicação · Compreensão'},
+    {nome:'Juliana Souza', media:6.2,gap:'Plano de Evolução'},
+    {nome:'Pedro Alves',   media:5.1,gap:'Compreensão · Plano de Evolução'},
+  ]
+};
+
+// ── HELPERS ───────────────────────────────────────────
+function divBar(df,dn,nc,cf) {
+  const lPad = Math.max(0, 50 - (df+dn));
+  const rPad = Math.max(0, 100 - lPad - df - dn - nc - cf);
+  return `<div class="div-bar">
+    <div class="div-bar-inner">
+      <div style="width:${lPad}%;"></div>
+      <div style="width:${df}%;background:var(--df);"></div>
+      <div style="width:${dn}%;background:var(--dn);"></div>
+      <div style="width:${nc}%;background:var(--nc);"></div>
+      <div style="width:${cf}%;background:var(--cf);"></div>
+      <div style="width:${rPad}%;"></div>
+    </div>
+    <div class="div-bar-center"></div>
+  </div>`;
+}
+
+function scoreColor(v) {
+  return v >= 8 ? 'var(--teal)' : v >= 6 ? 'var(--warn)' : 'var(--error)';
+}
+
+function upDown(up) {
+  return up
+    ? `<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>`
+    : `<polyline points="1 6 10.5 15.5 15.5 10.5 23 18"/><polyline points="17 18 23 18 23 12"/>`;
+}
+
+// ── RENDER FUNCTIONS ──────────────────────────────────
+function renderAll(periodo) {
+  renderGaps(periodo);
+  renderKPIs(periodo);
+  renderCharts(periodo);
+  renderTD5(periodo);
+  renderFLM(periodo);
+  renderSLM(periodo);
+  renderSubcomp(periodo);
+  renderEquipe(periodo);
+}
+
+function renderGaps(periodo) {
+  const subGaps  = tdSubcompData[periodo].filter(s => s.cf < 60).sort((a,b) => a.cf - b.cf);
+  const flmGaps  = notasFLMData[periodo].filter(p => p.cf < 55).sort((a,b) => a.cf - b.cf);
+  const slmGaps  = notasSLMData[periodo].filter(p => p.cf < 55).sort((a,b) => a.cf - b.cf);
+  const total    = subGaps.length + flmGaps.length + slmGaps.length;
+
+  const subRows = subGaps.map(s => {
+    const col = s.cf < 50 ? 'var(--error)' : 'var(--warn)';
+    return `<div class="gap-item">
+      <div class="gap-dot" style="background:${col};"></div>
+      <div style="flex:1;">
+        <div class="gap-item-name">${s.nome}</div>
+        <div class="gap-item-sub">${s.disc}</div>
+      </div>
+      <span class="gap-item-pct" style="color:${col};">${s.cf}%</span>
+    </div>`;
+  }).join('') || `<div style="padding:10px 0;font-size:12px;color:var(--teal);">Todas as sub-competências acima de 60% CF ✓</div>`;
+
+  const people = [
+    ...flmGaps.map(p => ({...p, tipo:'FLM', avatarCol:'var(--navy)'})),
+    ...slmGaps.map(p => ({...p, tipo:'SLM', avatarCol:'var(--teal-dark)'}))
+  ].sort((a,b) => a.cf - b.cf);
+
+  const personRows = people.map(p => {
+    const col = p.cf < 50 ? 'var(--error)' : 'var(--warn)';
+    const ini = p.nome.split(' ').slice(0,2).map(n=>n[0]).join('');
+    return `<div class="gap-item">
+      <div style="width:30px;height:30px;border-radius:15px;background:${p.avatarCol};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-size:11px;font-weight:700;color:white;">${ini}</span>
+      </div>
+      <div style="flex:1;">
+        <div class="gap-item-name">${p.nome}</div>
+        <div class="gap-item-sub">${p.linha} · <strong>${p.tipo}</strong></div>
+      </div>
+      <span class="gap-item-pct" style="color:${col};">${p.cf}% CF</span>
+    </div>`;
+  }).join('') || `<div style="padding:10px 0;font-size:12px;color:var(--teal);">Nenhuma pessoa em gap crítico neste período ✓</div>`;
+
+  const flmCol  = flmGaps.length  > 0 ? 'var(--error)' : 'var(--teal)';
+  const subCol  = subGaps.length  > 3 ? 'var(--error)' : subGaps.length > 0 ? 'var(--warn)' : 'var(--teal)';
+  const slmCol  = slmGaps.length  > 0 ? 'var(--error)' : 'var(--teal)';
+
+  document.getElementById('gap-panel').innerHTML = `
+    <div class="gap-header">
+      <div class="gap-header-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Painel de GAPs — Atenção Gerencial
+      </div>
+      <span class="gap-badge ${total === 0 ? 'ok' : ''}">${total === 0 ? 'Sem gaps críticos ✓' : total + ' item' + (total > 1 ? 's' : '') + ' em gap'}</span>
+    </div>
+    <div class="gap-summary">
+      <div class="gap-sum-card">
+        <div class="gap-sum-num" style="color:${flmCol};">${flmGaps.length}</div>
+        <div class="gap-sum-label">FLMs em gap crítico<br><span style="font-size:10px;color:var(--muted2);">CF abaixo de 55%</span></div>
+      </div>
+      <div class="gap-sum-card">
+        <div class="gap-sum-num" style="color:${subCol};">${subGaps.length}</div>
+        <div class="gap-sum-label">Sub-competências em gap<br><span style="font-size:10px;color:var(--muted2);">CF abaixo de 60%</span></div>
+      </div>
+      <div class="gap-sum-card">
+        <div class="gap-sum-num" style="color:${slmCol};">${slmGaps.length}</div>
+        <div class="gap-sum-label">SLMs em gap crítico<br><span style="font-size:10px;color:var(--muted2);">CF abaixo de 55%</span></div>
+      </div>
+    </div>
+    <div class="gap-body">
+      <div class="gap-col">
+        <div class="gap-col-title">Sub-competências em gap (CF &lt; 60%)</div>
+        ${subRows}
+      </div>
+      <div class="gap-col">
+        <div class="gap-col-title">Pessoas que precisam de atenção (CF &lt; 55%)</div>
+        ${personRows}
+      </div>
+    </div>`;
+}
+
+function renderKPIs(periodo) {
+  const d = relData[periodo]; const k = d.kpis;
+  const n = notasData[periodo];
+  ['concluidos','taxa','horas'].forEach(id => {
+    document.getElementById(`kpi-${id}`).textContent = k[id];
+  });
+  const teal = 'var(--teal)', muted = 'var(--muted)';
+  document.getElementById('kpi-c-delta').textContent = k.cDelta;
+  document.getElementById('kpi-c-delta').style.color = k.cUp ? teal : muted;
+  document.getElementById('kpi-c-icon').innerHTML = upDown(k.cUp);
+  document.getElementById('kpi-c-icon').setAttribute('stroke', k.cUp ? teal : muted);
+  document.getElementById('kpi-t-delta').textContent = k.tDelta;
+  document.getElementById('kpi-t-delta').style.color = k.tUp ? teal : muted;
+  document.getElementById('kpi-t-icon').innerHTML = upDown(k.tUp);
+  document.getElementById('kpi-t-icon').setAttribute('stroke', k.tUp ? teal : muted);
+  document.getElementById('kpi-h-delta').textContent = k.hDelta;
+  document.getElementById('kpi-h-delta').style.color = k.hUp ? teal : muted;
+  document.getElementById('kpi-h-icon').innerHTML = upDown(k.hUp);
+  document.getElementById('kpi-h-icon').setAttribute('stroke', k.hUp ? teal : muted);
+  document.getElementById('kpi-media').textContent = n.media;
+  document.getElementById('kpi-media-bar').style.width = n.mediaBar + '%';
+}
+
+function renderCharts(periodo) {
+  const d = relData[periodo];
+  const n = notasData[periodo];
+
+  // Bar chart conclusões
+  const chartEl = document.getElementById('chart-conclusoes');
+  chartEl.innerHTML = d.chart.map((b,i) => {
+    const isLast = i === d.chart.length-1;
+    const op = isLast ? 1 : (0.2 + (i/(d.chart.length-1))*0.5);
+    return `<div class="bar-col">
+      <div style="flex:1;display:flex;align-items:flex-end;width:100%;">
+        <div class="bar-fill" style="height:${b.v}%;background:var(--navy);opacity:${op};"></div>
+      </div>
+      <span class="bar-label" style="color:${isLast?'var(--navy)':'var(--muted)'};font-weight:${isLast?600:400};">${b.l}</span>
+    </div>`;
+  }).join('');
+
+  // Score distribution
+  const distEl = document.getElementById('chart-dist');
+  distEl.innerHTML = n.dist.map(s => `
+    <div class="dist-row">
+      <span class="dist-label">${s.label}</span>
+      <div class="dist-bar-wrap"><div class="dist-bar-fill" style="width:${s.pct}%;background:${s.color};"></div></div>
+      <span class="dist-pct" style="color:${s.color};">${s.pct}%</span>
+    </div>`).join('');
+
+  // Criterios
+  const critEl = document.getElementById('chart-criterios');
+  critEl.innerHTML = n.criterios.map(c => {
+    const col = scoreColor(c.media);
+    return `<div style="flex:1;text-align:center;padding:12px;background:var(--silver);border-radius:10px;">
+      <div style="font-size:10px;color:var(--muted);font-weight:500;margin-bottom:6px;line-height:1.3;">${c.nome}</div>
+      <div style="font-size:24px;font-weight:700;color:${col};">${c.media.toFixed(1)}</div>
+      <div style="height:4px;background:var(--line);border-radius:2px;margin-top:8px;overflow:hidden;">
+        <div style="height:100%;width:${c.media*10}%;background:${col};border-radius:2px;"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Top list
+  document.getElementById('top-list').innerHTML = d.top.map((t,i) => `
+    <div class="top-row">
+      <span class="top-rank">${i+1}</span>
+      <span class="top-name">${t.n}</span>
+      <div class="top-bar-wrap"><div class="top-bar-fill" style="width:${t.w}%;opacity:${1-i*.15};"></div></div>
+      <span class="top-count">${t.c} conclusões</span>
+    </div>`).join('');
+
+  // Notas por treinamento
+  document.getElementById('notas-por-treinamento').innerHTML = n.treinamentos.map(t => {
+    const col = scoreColor(t.media);
+    return `<div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;"></div>
+      <span style="font-size:13px;font-weight:500;color:var(--ink);flex:1;">${t.nome}</span>
+      <span style="font-size:16px;font-weight:700;color:${col};">${t.media.toFixed(1)}</span>
+    </div>`;
+  }).join('');
+
+  // Equipe resumo
+  const eq = equipeData[periodo];
+  const emDia = eq.filter(p=>p.media>=8).length;
+  const atencao = eq.filter(p=>p.media>=6&&p.media<8).length;
+  const critico = eq.filter(p=>p.media<6).length;
+  document.getElementById('equipe-resumo').innerHTML = `
+    <div style="flex:1;text-align:center;background:var(--teal-soft);border-radius:10px;padding:14px;">
+      <div style="font-size:28px;font-weight:700;color:var(--teal-dark);">${emDia}</div>
+      <div style="font-size:11px;color:var(--teal-dark);font-weight:600;margin-top:2px;">Em dia</div>
+    </div>
+    <div style="flex:1;text-align:center;background:#fff4e5;border-radius:10px;padding:14px;">
+      <div style="font-size:28px;font-weight:700;color:var(--warn);">${atencao}</div>
+      <div style="font-size:11px;color:var(--warn);font-weight:600;margin-top:2px;">Atenção</div>
+    </div>
+    <div style="flex:1;text-align:center;background:#ffecec;border-radius:10px;padding:14px;">
+      <div style="font-size:28px;font-weight:700;color:var(--error);">${critico}</div>
+      <div style="font-size:11px;color:var(--error);font-weight:600;margin-top:2px;">Gap Crítico</div>
+    </div>`;
+}
+
+function renderTD5(periodo) {
+  document.getElementById('td5-rows').innerHTML = td5discData[periodo].map(d => {
+    const neg = d.df + d.dn;
+    return `<div class="div-row">
+      <div class="div-header">
+        <div>
+          <div class="div-name">${d.nome}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="div-cf">${d.cf}% CF</div>
+          ${neg > 0 ? `<div style="font-size:11px;color:var(--dn);">${neg}% discordância</div>` : ''}
+        </div>
+      </div>
+      ${divBar(d.df,d.dn,d.nc,d.cf)}
+      <div class="div-footer">
+        <span class="div-neg">${neg>0?`DF ${d.df}% + DN ${d.dn}%`:''}</span>
+        <span class="div-nc">NC ${d.nc}%</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function personRows(data, avatarBg) {
+  return [...data].sort((a,b) => b.cf - a.cf).map(p => {
+    const ini = p.nome.split(' ').slice(0,2).map(n=>n[0]).join('');
+    const neg = p.df + p.dn;
+    return `<div class="person-row">
+      <div class="person-avatar" style="background:${avatarBg};">${ini}</div>
+      <div style="flex:0 0 140px;">
+        <div class="person-name">${p.nome}</div>
+        <div class="person-linha">${p.linha}</div>
+      </div>
+      <div class="person-bars" style="margin:0 12px;">
+        ${divBar(p.df,p.dn,p.nc,p.cf)}
+        ${neg > 0 ? `<div style="font-size:10px;color:var(--dn);margin-top:2px;">${neg}% discordância</div>` : ''}
+      </div>
+      <div class="person-cf">${p.cf}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderFLM(periodo) {
+  const data = activeDept === 'Todos'
+    ? notasFLMData[periodo]
+    : notasFLMData[periodo].filter(p => p.linha === activeDept);
+  document.getElementById('flm-rows').innerHTML = personRows(data, 'var(--navy)');
+}
+
+function renderSLM(periodo) {
+  document.getElementById('slm-rows').innerHTML = personRows(notasSLMData[periodo], 'var(--teal-dark)');
+}
+
+function renderSubcomp(periodo) {
+  document.getElementById('subcomp-rows').innerHTML = tdSubcompData[periodo].map(item => {
+    const neg = item.df + item.dn;
+    const isGap = item.cf < 60;
+    return `<div style="padding:12px 20px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);${isGap?'background:#fffbf0;':''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--ink);line-height:1.3;">${isGap?'⚠ ':''}${item.nome}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${item.disc}</div>
+        </div>
+        <span style="font-size:13px;font-weight:700;color:${isGap?'var(--warn)':'var(--teal)'};flex-shrink:0;margin-left:8px;">${item.cf}% CF</span>
+      </div>
+      ${divBar(item.df,item.dn,item.nc,item.cf)}
+      ${neg > 0 ? `<div style="font-size:10px;color:var(--dn);margin-top:3px;">${neg}% discordância</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function renderEquipe(periodo) {
+  document.getElementById('equipe-cards').innerHTML = equipeData[periodo].map(p => {
+    const col = scoreColor(p.media);
+    const label = p.media >= 8 ? 'Em dia' : p.media >= 6 ? 'Atenção' : 'Gap Crítico';
+    const ini = p.nome.split(' ').slice(0,2).map(n=>n[0]).join('');
+    return `<div class="eq-card">
+      <div class="eq-avatar">${ini}</div>
+      <div style="flex:1;">
+        <div class="eq-name">${p.nome}</div>
+        <div class="eq-score" style="color:${col};">${p.media.toFixed(1)}</div>
+        <div class="eq-status" style="color:${col};">${label}</div>
+        ${p.gap ? `<div class="eq-gap">Gap: ${p.gap}</div>` : `<div class="eq-ok">Sem gaps identificados</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── CONTROLES ─────────────────────────────────────────
+function setPeriodo(btn, periodo) {
+  activePeriodo = periodo;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll(periodo);
+}
+
+function setDept(dept) {
+  activeDept = dept;
+  renderFLM(activePeriodo);
+}
+
+// ── INIT ──────────────────────────────────────────────
+window.addEventListener('load', () => renderAll('30'));
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Arquivos grandes / dados sensíveis
+*.xlsx
+*.mp4
+*.mov
