@@ -1367,7 +1367,10 @@ html{
         <div class="hbtn" onclick="goTo('coaching')" style="flex-shrink:0;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </div>
-        <div style="flex:1;text-align:center;font-size:17px;font-weight:600;color:white;letter-spacing:.1px;">Avaliação</div>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:17px;font-weight:600;color:white;letter-spacing:.1px;">Avaliação FCR</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:1px;">Nossas Pesquisas</div>
+        </div>
         <div style="min-width:38px;display:flex;align-items:center;gap:2px;">
           <div class="hbtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
           <div class="hbtn" style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="nbadge-sm" style="top:4px;right:4px;"><span>2</span></div></div>
@@ -1409,39 +1412,66 @@ html{
         </div>
       </div>
 
-      <!-- Info da resposta -->
-      <div style="background:white;padding:16px 20px 18px;border-bottom:1px solid var(--line);">
-        <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:4px;">Resposta — Ana Ferreira</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:2px;">por <strong style="color:var(--ink2);">Ana Ferreira</strong></div>
-        <div style="font-size:12px;color:var(--muted2);">Nossas Pesquisas · Enviado hoje | 9h25</div>
+      <!-- Context card -->
+      <div style="background:white;padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;border-radius:20px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="font-size:15px;font-weight:700;color:white;">AF</span>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:600;color:var(--ink);">Ana Ferreira</div>
+          <div style="font-size:12px;color:var(--muted2);">Enviado hoje · 9h25</div>
+        </div>
+        <span style="background:var(--teal-soft);color:var(--teal-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;">FCR</span>
       </div>
 
-      <!-- Nota -->
-      <div style="background:white;margin-top:8px;padding:20px;">
-        <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;">Escolha a nota</div>
-        <div class="time-slider-wrap" style="padding-top:32px;">
-          <div class="time-slider-tooltip" id="nota-tooltip" style="background:var(--navy);">10,0</div>
-          <input type="range" class="time-slider" id="nota-slider"
-            min="0" max="10" step="0.5" value="10"
-            oninput="updateNota(this)"
-            style="background:linear-gradient(to right, var(--navy) 100%, var(--line) 100%);">
+      <!-- Critérios de Avaliação -->
+      <div style="background:white;margin-top:8px;padding:20px;display:flex;flex-direction:column;gap:18px;">
+        <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Critérios de Avaliação</div>
+
+        <!-- Critério 1 -->
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px;">Compreensão do Conteúdo</div>
+          <div id="crit-0" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+            <button onclick="selectCrit(0,1)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Não atingiu</button>
+            <button onclick="selectCrit(0,2)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Parcial</button>
+            <button onclick="selectCrit(0,3)" style="border:1.5px solid var(--teal);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:var(--teal-soft);color:var(--teal-dark);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Atingiu</button>
+            <button onclick="selectCrit(0,4)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Superou</button>
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between;margin-top:8px;">
-          <span style="font-size:11px;color:var(--muted);">0</span>
-          <span style="font-size:11px;color:var(--muted);">10</span>
+
+        <!-- Critério 2 -->
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px;">Aplicação Prática</div>
+          <div id="crit-1" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+            <button onclick="selectCrit(1,1)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Não atingiu</button>
+            <button onclick="selectCrit(1,2)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Parcial</button>
+            <button onclick="selectCrit(1,3)" style="border:1.5px solid var(--teal);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:var(--teal-soft);color:var(--teal-dark);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Atingiu</button>
+            <button onclick="selectCrit(1,4)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Superou</button>
+          </div>
+        </div>
+
+        <!-- Critério 3 -->
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px;">Plano de Evolução</div>
+          <div id="crit-2" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+            <button onclick="selectCrit(2,1)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Não atingiu</button>
+            <button onclick="selectCrit(2,2)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Parcial</button>
+            <button onclick="selectCrit(2,3)" style="border:1.5px solid var(--teal);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:var(--teal-soft);color:var(--teal-dark);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Atingiu</button>
+            <button onclick="selectCrit(2,4)" style="border:1.5px solid var(--line);border-radius:8px;padding:9px 2px;font-size:10px;font-weight:600;background:white;color:var(--muted);cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:.15s;">Superou</button>
+          </div>
         </div>
       </div>
 
-      <!-- Comentário -->
+      <!-- Feedback Geral -->
       <div style="background:white;margin-top:8px;padding:20px;">
-        <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Escreva um comentário</div>
-        <textarea placeholder="Ótimo trabalho!" style="width:100%;min-height:100px;border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);resize:none;outline:none;line-height:1.5;">Ótimo trabalho!</textarea>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Feedback Geral</div>
+        <textarea placeholder="Escreva um feedback..." style="width:100%;min-height:90px;border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);resize:none;outline:none;line-height:1.5;">Ótimo trabalho! Demonstrou boa compreensão do conteúdo.</textarea>
       </div>
 
       <!-- Botão enviar -->
       <div style="padding:20px;padding-bottom:36px;">
         <button onclick="goTo('coaching')" style="width:100%;height:52px;background:var(--navy);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:white;cursor:pointer;letter-spacing:.3px;">
-          Enviar avaliação
+          Enviar Avaliação
         </button>
       </div>
 
@@ -2252,7 +2282,7 @@ html{
         <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,.5)"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,.5)"/></svg>
       </div>
     </div>
-    <div class="app-header">
+    <div class="app-header" style="padding-bottom:0;">
       <div class="app-header-row">
         <div class="app-header-side"></div>
         <div class="app-header-center"><div class="app-header-title">Relatórios</div></div>
@@ -2261,11 +2291,21 @@ html{
           <div class="hbtn" onclick="goTo('menu')"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></div>
         </div>
       </div>
+      <div style="display:flex;margin:8px -20px 0;border-top:1px solid rgba(255,255,255,.15);overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <div id="rel-tab-btn-geral" onclick="switchRelTab('geral')" style="flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:600;color:white;cursor:pointer;border-bottom:2px solid white;transition:all .2s;white-space:nowrap;">Geral</div>
+        <div id="rel-tab-btn-notas" onclick="switchRelTab('notas')" style="flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;">Notas</div>
+        <div id="rel-tab-btn-equipe" onclick="switchRelTab('equipe')" style="flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;">Equipe</div>
+        <div id="rel-tab-btn-notasFLM" onclick="switchRelTab('notasFLM')" style="flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;">Notas FLM</div>
+        <div id="rel-tab-btn-td5disc" onclick="switchRelTab('td5disc')" style="flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;">TD_5 disciplinas</div>
+        <div id="rel-tab-btn-tdSubcomp" onclick="switchRelTab('tdSubcomp')" style="flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;">TD_Sub compet</div>
+        <div id="rel-tab-btn-notasSLM" onclick="switchRelTab('notasSLM')" style="flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;">Notas SLM</div>
+      </div>
     </div>
-    <div class="s-body" style="top:110px;background:var(--silver);">
-      <div style="padding:20px;display:flex;flex-direction:column;gap:16px;padding-bottom:40px;">
 
-        <!-- Período + Departamento -->
+    <div class="s-body" style="top:153px;background:var(--silver);">
+
+      <!-- Filtro compartilhado -->
+      <div style="padding:12px 20px 8px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
           <div style="display:flex;gap:6px;" id="periodo-chips">
             <div class="rperiodo active" onclick="setRelPeriodo(this,'30')" style="padding:6px 14px;border-radius:9999px;background:var(--navy);color:white;font-size:13px;font-weight:600;cursor:pointer;">30d</div>
@@ -2286,50 +2326,68 @@ html{
             </div>
           </div>
         </div>
-
-        <!-- KPI cards -->
-        <div style="display:flex;gap:10px;">
-          <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
-            <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Concluídos</span>
-            <span id="kpi-concluidos" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">47</span>
-            <div style="display:flex;align-items:center;gap:4px;">
-              <svg id="kpi-c-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              <span id="kpi-c-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+12 vs ant.</span>
-            </div>
-          </div>
-          <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
-            <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Taxa</span>
-            <span id="kpi-taxa" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">78%</span>
-            <div style="display:flex;align-items:center;gap:4px;">
-              <svg id="kpi-t-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              <span id="kpi-t-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+5% vs ant.</span>
-            </div>
-          </div>
-          <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
-            <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Horas</span>
-            <span id="kpi-horas" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">124h</span>
-            <div style="display:flex;align-items:center;gap:4px;">
-              <svg id="kpi-h-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              <span id="kpi-h-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+8h vs ant.</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Gráfico de barras -->
-        <div style="background:white;border:1px solid var(--line);border-radius:12px;padding:16px;">
-          <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;">Conclusões por mês</div>
-          <div id="rel-chart" style="display:flex;align-items:flex-end;gap:8px;height:80px;padding-bottom:20px;position:relative;"></div>
-        </div>
-
-        <!-- Top treinamentos -->
-        <div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">
-          <div style="padding:14px 16px;border-bottom:1px solid var(--line);">
-            <span style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Top treinamentos</span>
-          </div>
-          <div id="rel-top" style="display:flex;flex-direction:column;"></div>
-        </div>
-
       </div>
+
+      <!-- PANEL: GERAL -->
+      <div id="rel-panel-geral">
+        <div style="padding:8px 20px 40px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:10px;">
+            <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Concluídos</span>
+              <span id="kpi-concluidos" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">47</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <svg id="kpi-c-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <span id="kpi-c-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+12 vs ant.</span>
+              </div>
+            </div>
+            <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Taxa</span>
+              <span id="kpi-taxa" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">78%</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <svg id="kpi-t-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <span id="kpi-t-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+5% vs ant.</span>
+              </div>
+            </div>
+            <div style="flex:1;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Horas</span>
+              <span id="kpi-horas" style="font-size:24px;font-weight:700;color:var(--ink);transition:all .3s;">124h</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <svg id="kpi-h-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <span id="kpi-h-delta" style="font-size:11px;color:var(--teal);font-weight:500;">+8h vs ant.</span>
+              </div>
+            </div>
+          </div>
+          <div style="background:white;border:1px solid var(--line);border-radius:12px;padding:16px;">
+            <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;">Conclusões por mês</div>
+            <div id="rel-chart" style="display:flex;align-items:flex-end;gap:8px;height:80px;padding-bottom:20px;position:relative;"></div>
+          </div>
+          <div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--line);">
+              <span style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Top treinamentos</span>
+            </div>
+            <div id="rel-top" style="display:flex;flex-direction:column;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: NOTAS -->
+      <div id="rel-panel-notas" style="display:none;"></div>
+
+      <!-- PANEL: EQUIPE -->
+      <div id="rel-panel-equipe" style="display:none;"></div>
+
+      <!-- PANEL: NOTAS FLM -->
+      <div id="rel-panel-notasFLM" style="display:none;"></div>
+
+      <!-- PANEL: TD_5 DISCIPLINAS -->
+      <div id="rel-panel-td5disc" style="display:none;"></div>
+
+      <!-- PANEL: TD_SUB COMPET -->
+      <div id="rel-panel-tdSubcomp" style="display:none;"></div>
+
+      <!-- PANEL: NOTAS SLM -->
+      <div id="rel-panel-notasSLM" style="display:none;"></div>
+
     </div>
   </div>
 
@@ -2741,7 +2799,55 @@ html{
 </div><!-- /device -->
 
 <script>
-// ── RELATÓRIOS ────────────────────────────────────────
+
+function setRelPeriodo(el, periodo) {
+  relActivePeriodo = periodo;
+  document.querySelectorAll('.rperiodo').forEach(c => {
+    c.style.background = 'white';
+    c.style.color = 'var(--muted)';
+    c.style.border = '1px solid var(--line)';
+    c.style.fontWeight = '500';
+  });
+  el.style.background = 'var(--navy)';
+  el.style.color = 'white';
+  el.style.border = 'none';
+  el.style.fontWeight = '600';
+  if (REL_RENDERS[relActiveTab]) REL_RENDERS[relActiveTab](periodo);
+}
+
+function toggleDeptMenu() {
+  const m = document.getElementById('dept-menu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectDept(el, name) {
+  document.getElementById('dept-label').textContent = name;
+  document.getElementById('dept-label').style.color = name === 'Todos' ? 'var(--muted)' : 'var(--navy)';
+  document.getElementById('dept-menu').style.display = 'none';
+}
+
+window.addEventListener('load', () => { renderRel('30'); renderNotas('30'); renderEquipe('30'); renderNotasFLM('30'); renderTD5disc('30'); renderTDSubcomp('30'); renderNotasSLM('30'); });
+
+// ── ABAS DE RELATÓRIOS ───────────────────────────────
+let relActiveTab = 'geral';
+let relActivePeriodo = '30';
+const REL_TABS = ['geral','notas','equipe','notasFLM','td5disc','tdSubcomp','notasSLM'];
+const REL_RENDERS = {};
+
+function switchRelTab(tab) {
+  if (relActiveTab === tab) return;
+  relActiveTab = tab;
+  REL_TABS.forEach(t => {
+    document.getElementById(`rel-panel-${t}`).style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById(`rel-tab-btn-${t}`);
+    btn.style.color = t === tab ? 'white' : 'rgba(255,255,255,.6)';
+    btn.style.fontWeight = t === tab ? '600' : '500';
+    btn.style.borderBottom = t === tab ? '2px solid white' : '2px solid transparent';
+  });
+  if (REL_RENDERS[tab]) REL_RENDERS[tab](relActivePeriodo);
+}
+
+// ── DADOS E RENDERS: GERAL ────────────────────────────
 const relData = {
   '30': {
     kpis: { concluidos:'47', cDelta:'+12 vs ant.', cUp:true, taxa:'78%', tDelta:'+5% vs ant.', tUp:true, horas:'124h', hDelta:'+8h vs ant.', hUp:true },
@@ -2761,83 +2867,436 @@ const relData = {
 };
 
 function renderRel(periodo) {
-  const d = relData[periodo];
-  const k = d.kpis;
+  const d = relData[periodo]; const k = d.kpis;
   const tealUp = `<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>`;
   const mutedDown = `<polyline points="1 6 10.5 15.5 15.5 10.5 23 18"/><polyline points="17 18 23 18 23 12"/>`;
-
   document.getElementById('kpi-concluidos').textContent = k.concluidos;
   document.getElementById('kpi-c-delta').textContent = k.cDelta;
   document.getElementById('kpi-c-delta').style.color = k.cUp ? 'var(--teal)' : 'var(--muted)';
   document.getElementById('kpi-c-icon').innerHTML = k.cUp ? tealUp : mutedDown;
   document.getElementById('kpi-c-icon').setAttribute('stroke', k.cUp ? 'var(--teal)' : 'var(--muted)');
-
   document.getElementById('kpi-taxa').textContent = k.taxa;
   document.getElementById('kpi-t-delta').textContent = k.tDelta;
   document.getElementById('kpi-t-delta').style.color = k.tUp ? 'var(--teal)' : 'var(--muted)';
   document.getElementById('kpi-t-icon').innerHTML = k.tUp ? tealUp : mutedDown;
   document.getElementById('kpi-t-icon').setAttribute('stroke', k.tUp ? 'var(--teal)' : 'var(--muted)');
-
   document.getElementById('kpi-horas').textContent = k.horas;
   document.getElementById('kpi-h-delta').textContent = k.hDelta;
   document.getElementById('kpi-h-delta').style.color = k.hUp ? 'var(--teal)' : 'var(--muted)';
   document.getElementById('kpi-h-icon').innerHTML = k.hUp ? tealUp : mutedDown;
   document.getElementById('kpi-h-icon').setAttribute('stroke', k.hUp ? 'var(--teal)' : 'var(--muted)');
-
-  // chart
   const chart = document.getElementById('rel-chart');
-  chart.innerHTML = d.chart.map((b, i) => {
-    const isLast = i === d.chart.length - 1;
-    const op = isLast ? 1 : (0.2 + (i / (d.chart.length - 1)) * 0.5);
-    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;">
-      <div style="flex:1;display:flex;align-items:flex-end;width:100%;">
-        <div style="width:100%;height:${b.v}%;background:var(--navy);opacity:${op};border-radius:3px 3px 0 0;transition:height .4s ease;"></div>
-      </div>
-      <span style="font-size:9px;color:${isLast?'var(--navy)':'var(--muted)'};font-weight:${isLast?'600':'400'};position:absolute;bottom:0;">${b.l}</span>
-    </div>`;
+  chart.innerHTML = d.chart.map((b,i) => {
+    const isLast = i === d.chart.length-1;
+    const op = isLast ? 1 : (0.2 + (i/(d.chart.length-1))*0.5);
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;"><div style="flex:1;display:flex;align-items:flex-end;width:100%;"><div style="width:100%;height:${b.v}%;background:var(--navy);opacity:${op};border-radius:3px 3px 0 0;transition:height .4s ease;"></div></div><span style="font-size:9px;color:${isLast?'var(--navy)':'var(--muted)'};font-weight:${isLast?'600':'400'};position:absolute;bottom:0;">${b.l}</span></div>`;
   }).join('');
-
-  // top
-  const top = document.getElementById('rel-top');
-  top.innerHTML = d.top.map((t, i) => `
-    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;${i < d.top.length-1?'border-bottom:1px solid var(--line);':''}">
+  document.getElementById('rel-top').innerHTML = d.top.map((t,i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;${i<d.top.length-1?'border-bottom:1px solid var(--line);':''}">
       <span style="font-size:13px;font-weight:700;color:var(--navy);width:16px;">${i+1}</span>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:500;color:var(--ink);">${t.n}</div>
-        <div style="height:4px;background:var(--line);border-radius:2px;margin-top:4px;">
-          <div style="height:4px;width:${t.w}%;background:var(--navy);opacity:${1 - i*0.15};border-radius:2px;transition:width .4s ease;"></div>
-        </div>
-      </div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--ink);">${t.n}</div><div style="height:4px;background:var(--line);border-radius:2px;margin-top:4px;"><div style="height:4px;width:${t.w}%;background:var(--navy);opacity:${1-i*.15};border-radius:2px;transition:width .4s ease;"></div></div></div>
       <span style="font-size:12px;color:var(--muted);">${t.c} conclusões</span>
     </div>`).join('');
 }
+REL_RENDERS['geral'] = renderRel;
 
-function setRelPeriodo(el, periodo) {
-  document.querySelectorAll('.rperiodo').forEach(c => {
-    c.style.background = 'white';
-    c.style.color = 'var(--muted)';
-    c.style.border = '1px solid var(--line)';
-    c.style.fontWeight = '500';
+// ── DADOS E RENDERS: NOTAS ───────────────────────────
+const notasData = {
+  '30': {
+    media:'8.4', dist:[{label:'Excelente (≥8)',pct:62,color:'var(--teal)'},{label:'Bom (6–8)',pct:28,color:'var(--warn)'},{label:'Atenção (<6)',pct:10,color:'var(--error)'}],
+    criterios:[{nome:'Compreensão',media:8.7},{nome:'Aplicação',media:8.1},{nome:'Plano de Evolução',media:8.3}],
+    treinamentos:[{nome:'Compliance',media:9.1,total:26},{nome:'Nossas Pesquisas',media:8.9,total:43},{nome:'Field Coaching',media:7.2,total:31},{nome:'Objeções',media:6.8,total:18}]
+  },
+  '90': {
+    media:'7.9', dist:[{label:'Excelente (≥8)',pct:48,color:'var(--teal)'},{label:'Bom (6–8)',pct:35,color:'var(--warn)'},{label:'Atenção (<6)',pct:17,color:'var(--error)'}],
+    criterios:[{nome:'Compreensão',media:8.2},{nome:'Aplicação',media:7.6},{nome:'Plano de Evolução',media:7.9}],
+    treinamentos:[{nome:'Compliance',media:8.7,total:64},{nome:'Nossas Pesquisas',media:8.4,total:112},{nome:'Field Coaching',media:7.0,total:87},{nome:'Objeções',media:6.5,total:45}]
+  },
+  '365': {
+    media:'7.6', dist:[{label:'Excelente (≥8)',pct:43,color:'var(--teal)'},{label:'Bom (6–8)',pct:38,color:'var(--warn)'},{label:'Atenção (<6)',pct:19,color:'var(--error)'}],
+    criterios:[{nome:'Compreensão',media:7.9},{nome:'Aplicação',media:7.3},{nome:'Plano de Evolução',media:7.6}],
+    treinamentos:[{nome:'Compliance',media:8.5,total:121},{nome:'Nossas Pesquisas',media:8.1,total:198},{nome:'Field Coaching',media:6.8,total:154},{nome:'Objeções',media:6.4,total:89}]
+  }
+};
+
+function renderNotas(periodo) {
+  const d = notasData[periodo];
+  const distBar = d.dist.map(s=>`<div style="flex:${s.pct};height:100%;background:${s.color};"></div>`).join('');
+  const legend = d.dist.map(s=>`<div style="display:flex;align-items:center;gap:5px;"><div style="width:8px;height:8px;border-radius:50%;background:${s.color};flex-shrink:0;"></div><span style="font-size:10px;color:var(--muted);">${s.label} · ${s.pct}%</span></div>`).join('');
+  const criteriosHTML = d.criterios.map(c=>{
+    const col = c.media>=8?'var(--teal)':c.media>=6?'var(--warn)':'var(--error)';
+    return `<div style="flex:1;background:white;border:1px solid var(--line);border-radius:10px;padding:12px 8px;text-align:center;"><div style="font-size:10px;color:var(--muted);font-weight:500;margin-bottom:6px;line-height:1.3;">${c.nome}</div><div style="font-size:22px;font-weight:700;color:${col};">${c.media.toFixed(1)}</div><div style="height:3px;background:var(--line);border-radius:2px;margin-top:8px;"><div style="height:3px;width:${c.media*10}%;background:${col};border-radius:2px;"></div></div></div>`;
+  }).join('');
+  const trainingsHTML = d.treinamentos.map((t,i)=>{
+    const col = t.media>=8?'var(--teal)':t.media>=6?'var(--warn)':'var(--error)';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;${i<d.treinamentos.length-1?'border-bottom:1px solid var(--line);':''}"><div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;"></div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--ink);">${t.nome}</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">${t.total} avaliações</div></div><div style="font-size:20px;font-weight:700;color:${col};">${t.media.toFixed(1)}</div></div>`;
+  }).join('');
+  document.getElementById('rel-panel-notas').innerHTML = `<div style="padding:8px 20px 40px;display:flex;flex-direction:column;gap:16px;">
+    <div style="background:white;border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;align-items:center;gap:16px;"><div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Média Geral</div><div style="font-size:42px;font-weight:700;color:var(--navy);line-height:1;">${d.media}</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">/ 10</div></div><div style="flex:1;"><div style="height:10px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:10px;">${distBar}</div><div style="display:flex;flex-direction:column;gap:4px;">${legend}</div></div></div>
+    <div><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding:0 2px;">Por Critério</div><div style="display:flex;gap:8px;">${criteriosHTML}</div></div>
+    <div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;"><div style="padding:14px 16px;border-bottom:1px solid var(--line);"><span style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Por Treinamento</span></div>${trainingsHTML}</div>
+  </div>`;
+}
+REL_RENDERS['notas'] = renderNotas;
+
+// ── DADOS E RENDERS: EQUIPE ──────────────────────────
+const equipeData = {
+  '30': [
+    {nome:'Beatriz Lima',  media:9.2, gap:null},
+    {nome:'Ana Ferreira',  media:8.7, gap:null},
+    {nome:'Carlos Melo',   media:8.1, gap:null},
+    {nome:'Rafael Torres', media:7.4, gap:'Aplicação Prática'},
+    {nome:'Juliana Souza', media:6.9, gap:'Plano de Evolução'},
+    {nome:'Pedro Alves',   media:5.8, gap:'Compreensão · Plano de Evolução'}
+  ],
+  '90': [
+    {nome:'Beatriz Lima',  media:8.9, gap:null},
+    {nome:'Ana Ferreira',  media:8.3, gap:null},
+    {nome:'Carlos Melo',   media:7.8, gap:'Aplicação Prática'},
+    {nome:'Rafael Torres', media:7.1, gap:'Aplicação Prática'},
+    {nome:'Juliana Souza', media:6.5, gap:'Plano de Evolução'},
+    {nome:'Pedro Alves',   media:5.4, gap:'Compreensão · Plano de Evolução'}
+  ],
+  '365': [
+    {nome:'Beatriz Lima',  media:8.6, gap:null},
+    {nome:'Ana Ferreira',  media:8.0, gap:null},
+    {nome:'Carlos Melo',   media:7.5, gap:'Aplicação Prática'},
+    {nome:'Rafael Torres', media:6.8, gap:'Aplicação · Compreensão'},
+    {nome:'Juliana Souza', media:6.2, gap:'Plano de Evolução'},
+    {nome:'Pedro Alves',   media:5.1, gap:'Compreensão · Plano de Evolução'}
+  ]
+};
+
+function renderEquipe(periodo) {
+  const d = equipeData[periodo];
+  const emDia=d.filter(p=>p.media>=8).length, atencao=d.filter(p=>p.media>=6&&p.media<8).length, critico=d.filter(p=>p.media<6).length;
+  const items = d.map(p=>{
+    const col=p.media>=8?'var(--teal)':p.media>=6?'var(--warn)':'var(--error)';
+    const label=p.media>=8?'Em dia':p.media>=6?'Atenção':'Gap crítico';
+    const ini=p.nome.split(' ').slice(0,2).map(n=>n[0]).join('');
+    const gapHtml=p.gap?`<div style="font-size:11px;color:var(--error);margin-top:2px;">Gap: ${p.gap}</div>`:`<div style="font-size:11px;color:var(--teal);margin-top:2px;">Sem gaps identificados</div>`;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);"><div style="width:40px;height:40px;border-radius:20px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:14px;font-weight:700;color:white;">${ini}</span></div><div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--ink);">${p.nome}</div>${gapHtml}</div><div style="text-align:right;"><div style="font-size:20px;font-weight:700;color:${col};">${p.media.toFixed(1)}</div><div style="font-size:10px;font-weight:600;color:${col};text-transform:uppercase;letter-spacing:.5px;">${label}</div></div></div>`;
+  }).join('');
+  document.getElementById('rel-panel-equipe').innerHTML = `<div style="padding:8px 20px 40px;display:flex;flex-direction:column;gap:16px;"><div style="display:flex;gap:8px;"><div style="flex:1;background:var(--teal-soft);border-radius:10px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--teal-dark);">${emDia}</div><div style="font-size:11px;color:var(--teal-dark);font-weight:500;margin-top:2px;">Em dia</div></div><div style="flex:1;background:#fff4e5;border-radius:10px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--warn);">${atencao}</div><div style="font-size:11px;color:var(--warn);font-weight:500;margin-top:2px;">Atenção</div></div><div style="flex:1;background:#ffecec;border-radius:10px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--error);">${critico}</div><div style="font-size:11px;color:var(--error);font-weight:500;margin-top:2px;">Gap Crítico</div></div></div><div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">${items}</div></div>`;
+}
+REL_RENDERS['equipe'] = renderEquipe;
+
+// (xlsx tabs registered after their functions are declared)
+
+// ── LEGENDA E BAR HELPER ─────────────────────────────
+const LEGEND_HTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;background:white;border:1px solid var(--line);border-radius:10px;align-items:center;">
+  <span style="font-size:11px;color:var(--muted2);font-weight:700;">◄</span>
+  <div style="display:flex;align-items:center;gap:4px;"><div style="width:10px;height:10px;border-radius:2px;background:#d63031;"></div><span style="font-size:10px;color:var(--muted);">Discordo Fort.</span></div>
+  <div style="display:flex;align-items:center;gap:4px;"><div style="width:10px;height:10px;border-radius:2px;background:#e8900a;"></div><span style="font-size:10px;color:var(--muted);">Discordo/Neutro</span></div>
+  <span style="font-size:9px;color:var(--muted2);margin:0 2px;">│ 50% │</span>
+  <div style="display:flex;align-items:center;gap:4px;"><div style="width:10px;height:10px;border-radius:2px;background:#b2dfdb;"></div><span style="font-size:10px;color:var(--muted);">Neutro/Concordo</span></div>
+  <div style="display:flex;align-items:center;gap:4px;"><div style="width:10px;height:10px;border-radius:2px;background:var(--teal);"></div><span style="font-size:10px;color:var(--muted);">Concordo Fort.</span></div>
+  <span style="font-size:11px;color:var(--muted2);font-weight:700;">►</span>
+</div>`;
+
+function stackBar(df, dn, nc, cf) {
+  const lPad = Math.max(0, 50 - (df + dn));
+  const rPad = Math.max(0, 50 - (nc + cf));
+  return `<div style="position:relative;height:12px;border-radius:6px;overflow:hidden;background:#eef0f6;">
+    <div style="position:absolute;inset:0;display:flex;">
+      <div style="width:${lPad}%;"></div>
+      <div style="width:${df}%;background:#d63031;"></div>
+      <div style="width:${dn}%;background:#e8900a;"></div>
+      <div style="width:${nc}%;background:#b2dfdb;"></div>
+      <div style="width:${cf}%;background:var(--teal);"></div>
+      <div style="width:${rPad}%;"></div>
+    </div>
+    <div style="position:absolute;left:50%;top:0;bottom:0;width:1.5px;background:rgba(0,0,0,.18);transform:translateX(-50%);"></div>
+  </div>`;
+}
+
+// ── NOTAS FLM ────────────────────────────────────────
+const notasFLMData = {
+  '30': [
+    {nome:'Janderson Pereira', linha:'GDs Xolair',   df:0, dn:1, nc:21, cf:78},
+    {nome:'Marcos Kuriu',      linha:'GDs Xolair',   df:0, dn:2, nc:21, cf:77},
+    {nome:'Thais Abud',        linha:'GDs Ofta',     df:0, dn:2, nc:28, cf:70},
+    {nome:'Adriana Moraes',    linha:'GDs Cosentyx', df:0, dn:2, nc:24, cf:74},
+    {nome:'Tereza Ferreira',   linha:'GDs Cardio',   df:0, dn:3, nc:34, cf:63},
+    {nome:'Fabiano Silva',     linha:'GDs Cardio',   df:0, dn:3, nc:33, cf:64},
+    {nome:'Eduardo França',    linha:'GDs Cosentyx', df:0, dn:4, nc:35, cf:61},
+    {nome:'Paulo Rodrigues',   linha:'GDs Cosentyx', df:0, dn:4, nc:35, cf:61},
+    {nome:'Claudio Moura',     linha:'GDs Cardio',   df:0, dn:4, nc:38, cf:58},
+    {nome:'Patricia Carlo',    linha:'GDs Cosentyx', df:0, dn:6, nc:36, cf:58},
+    {nome:'Alexandre Bado',    linha:'GDs Cosentyx', df:0, dn:2, nc:32, cf:66},
+    {nome:'Felipe Lima',       linha:'GDs Cosentyx', df:0, dn:8, nc:30, cf:62},
+    {nome:'Jorge Delamare',    linha:'GDs Cardio',   df:0, dn:5, nc:35, cf:60},
+    {nome:'Vlamir Galembeck',  linha:'GDs Cardio',   df:0, dn:5, nc:33, cf:62},
+    {nome:'Marcelo Andrade',   linha:'GDs Cosentyx', df:1, dn:5, nc:40, cf:54},
+    {nome:'Ana Carolina R.',   linha:'GDs Cardio',   df:1, dn:6, nc:38, cf:55},
+    {nome:'Sergio Nunes',      linha:'GDs Xolair',   df:1, dn:7, nc:40, cf:52},
+    {nome:'Alexandre Cavada',  linha:'GDs Neuro',    df:0, dn:5, nc:38, cf:57},
+  ],
+  '90': [
+    {nome:'Janderson Pereira', linha:'GDs Xolair',   df:0, dn:2, nc:22, cf:76},
+    {nome:'Marcos Kuriu',      linha:'GDs Xolair',   df:0, dn:2, nc:23, cf:75},
+    {nome:'Thais Abud',        linha:'GDs Ofta',     df:0, dn:3, nc:29, cf:68},
+    {nome:'Adriana Moraes',    linha:'GDs Cosentyx', df:0, dn:3, nc:26, cf:71},
+    {nome:'Tereza Ferreira',   linha:'GDs Cardio',   df:0, dn:4, nc:35, cf:61},
+    {nome:'Fabiano Silva',     linha:'GDs Cardio',   df:0, dn:4, nc:35, cf:61},
+    {nome:'Eduardo França',    linha:'GDs Cosentyx', df:0, dn:5, nc:37, cf:58},
+    {nome:'Paulo Rodrigues',   linha:'GDs Cosentyx', df:0, dn:5, nc:37, cf:58},
+    {nome:'Claudio Moura',     linha:'GDs Cardio',   df:0, dn:5, nc:39, cf:56},
+    {nome:'Patricia Carlo',    linha:'GDs Cosentyx', df:0, dn:7, nc:37, cf:56},
+    {nome:'Alexandre Bado',    linha:'GDs Cosentyx', df:0, dn:3, nc:34, cf:63},
+    {nome:'Felipe Lima',       linha:'GDs Cosentyx', df:1, dn:9, nc:32, cf:58},
+    {nome:'Jorge Delamare',    linha:'GDs Cardio',   df:0, dn:6, nc:37, cf:57},
+    {nome:'Vlamir Galembeck',  linha:'GDs Cardio',   df:0, dn:6, nc:35, cf:59},
+    {nome:'Marcelo Andrade',   linha:'GDs Cosentyx', df:1, dn:6, nc:41, cf:52},
+    {nome:'Ana Carolina R.',   linha:'GDs Cardio',   df:1, dn:7, nc:39, cf:53},
+    {nome:'Sergio Nunes',      linha:'GDs Xolair',   df:1, dn:8, nc:42, cf:49},
+    {nome:'Alexandre Cavada',  linha:'GDs Neuro',    df:1, dn:6, nc:40, cf:53},
+  ],
+  '365': [
+    {nome:'Janderson Pereira', linha:'GDs Xolair',   df:0, dn:2, nc:24, cf:74},
+    {nome:'Marcos Kuriu',      linha:'GDs Xolair',   df:0, dn:3, nc:25, cf:72},
+    {nome:'Thais Abud',        linha:'GDs Ofta',     df:0, dn:4, nc:31, cf:65},
+    {nome:'Adriana Moraes',    linha:'GDs Cosentyx', df:0, dn:4, nc:28, cf:68},
+    {nome:'Tereza Ferreira',   linha:'GDs Cardio',   df:0, dn:5, nc:37, cf:58},
+    {nome:'Fabiano Silva',     linha:'GDs Cardio',   df:0, dn:5, nc:37, cf:58},
+    {nome:'Eduardo França',    linha:'GDs Cosentyx', df:1, dn:6, nc:38, cf:55},
+    {nome:'Paulo Rodrigues',   linha:'GDs Cosentyx', df:1, dn:6, nc:38, cf:55},
+    {nome:'Claudio Moura',     linha:'GDs Cardio',   df:1, dn:6, nc:40, cf:53},
+    {nome:'Patricia Carlo',    linha:'GDs Cosentyx', df:1, dn:8, nc:38, cf:53},
+    {nome:'Alexandre Bado',    linha:'GDs Cosentyx', df:0, dn:4, nc:36, cf:60},
+    {nome:'Felipe Lima',       linha:'GDs Cosentyx', df:1, dn:10,nc:34, cf:55},
+    {nome:'Jorge Delamare',    linha:'GDs Cardio',   df:1, dn:7, nc:38, cf:54},
+    {nome:'Vlamir Galembeck',  linha:'GDs Cardio',   df:1, dn:7, nc:37, cf:55},
+    {nome:'Marcelo Andrade',   linha:'GDs Cosentyx', df:2, dn:7, nc:42, cf:49},
+    {nome:'Ana Carolina R.',   linha:'GDs Cardio',   df:2, dn:8, nc:40, cf:50},
+    {nome:'Sergio Nunes',      linha:'GDs Xolair',   df:2, dn:9, nc:43, cf:46},
+    {nome:'Alexandre Cavada',  linha:'GDs Neuro',    df:1, dn:7, nc:41, cf:51},
+  ]
+};
+
+function renderNotasFLM(periodo) {
+  const people = notasFLMData[periodo];
+  const rows = people.map((p,i)=>{
+    const ini = p.nome.split(' ').slice(0,2).map(n=>n[0]).join('');
+    const border = i<people.length-1?'border-bottom:1px solid var(--line);':'';
+    const neg = p.df + p.dn;
+    const negLabel = neg > 0 ? `<span style="font-size:10px;color:#e8900a;">${neg}% discordância</span>` : '';
+    return `<div style="padding:12px 16px;${border}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="width:34px;height:34px;border-radius:17px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:12px;font-weight:700;color:white;">${ini}</span></div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--ink);">${p.nome}</div><div style="font-size:11px;color:var(--muted);">${p.linha}</div></div>
+        <div style="font-size:13px;font-weight:700;color:var(--teal);">${p.cf}% CF</div>
+      </div>
+      ${stackBar(p.df,p.dn,p.nc,p.cf)}
+      <div style="display:flex;justify-content:space-between;margin-top:3px;">${negLabel}<span style="font-size:10px;color:var(--teal);margin-left:auto;">${p.nc}% NC</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('rel-panel-notasFLM').innerHTML = `<div style="padding:8px 20px 40px;display:flex;flex-direction:column;gap:12px;">${LEGEND_HTML}<div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">${rows}</div></div>`;
+}
+
+// ── TD_5 DISCIPLINAS ─────────────────────────────────
+const td5discData = {
+  '30': [
+    {nome:'Aderência a Processos',       df:0, dn:1, nc:18, cf:81},
+    {nome:'Padrões de Qualidade e Time', df:0, dn:2, nc:31, cf:67},
+    {nome:'Coaching',                    df:0, dn:6, nc:36, cf:58},
+    {nome:'Ritmo de Gestão',             df:1, dn:6, nc:41, cf:52},
+    {nome:'Maximização de Performance',  df:0, dn:5, nc:42, cf:53},
+  ],
+  '90': [
+    {nome:'Aderência a Processos',       df:0, dn:2, nc:19, cf:79},
+    {nome:'Padrões de Qualidade e Time', df:0, dn:3, nc:33, cf:64},
+    {nome:'Coaching',                    df:1, dn:7, nc:37, cf:55},
+    {nome:'Ritmo de Gestão',             df:1, dn:7, nc:43, cf:49},
+    {nome:'Maximização de Performance',  df:1, dn:6, nc:44, cf:49},
+  ],
+  '365': [
+    {nome:'Aderência a Processos',       df:0, dn:3, nc:21, cf:76},
+    {nome:'Padrões de Qualidade e Time', df:1, dn:4, nc:35, cf:60},
+    {nome:'Coaching',                    df:1, dn:8, nc:39, cf:52},
+    {nome:'Ritmo de Gestão',             df:2, dn:8, nc:44, cf:46},
+    {nome:'Maximização de Performance',  df:1, dn:7, nc:45, cf:47},
+  ]
+};
+
+function renderTD5disc(periodo) {
+  const disciplines = td5discData[periodo];
+  const rows = disciplines.map((d,i)=>{
+    const border = i<disciplines.length-1?'border-bottom:1px solid var(--line);':'';
+    const neg = d.df + d.dn;
+    return `<div style="padding:14px 16px;${border}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:600;color:var(--ink);">${d.nome}</span>
+        <span style="font-size:13px;font-weight:700;color:var(--teal);">${d.cf}% CF</span>
+      </div>
+      ${stackBar(d.df,d.dn,d.nc,d.cf)}
+      <div style="display:flex;justify-content:space-between;margin-top:3px;">
+        ${neg > 0 ? `<span style="font-size:10px;color:#e8900a;">${neg}% discordância</span>` : '<span></span>'}
+        <span style="font-size:10px;color:var(--muted2);">NC ${d.nc}%</span>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('rel-panel-td5disc').innerHTML = `<div style="padding:8px 20px 40px;display:flex;flex-direction:column;gap:12px;">${LEGEND_HTML}<div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">${rows}</div></div>`;
+}
+
+// ── TD_SUB COMPET ────────────────────────────────────
+const tdSubcompData = {
+  '30': [
+    {nome:'Compliance',                         disc:'Padrões Q&T',         df:0,dn:0, nc:7, cf:93},
+    {nome:'Advoga Aderência aos Processos',      disc:'Aderência',           df:0,dn:1, nc:24,cf:75},
+    {nome:'Compreende o Proc. Promocional',      disc:'Aderência',           df:0,dn:1, nc:26,cf:73},
+    {nome:'É um exemplo em valores',             disc:'Padrões Q&T',         df:1,dn:5, nc:25,cf:69},
+    {nome:'Define claramente não negociáveis',   disc:'Padrões Q&T',         df:0,dn:3, nc:31,cf:66},
+    {nome:'Liderando Mudanças (Digital)',         disc:'Padrões Q&T',         df:0,dn:2, nc:32,cf:66},
+    {nome:'Fomenta cultura de desenvolvimento', disc:'Coaching',             df:1,dn:8, nc:25,cf:66},
+    {nome:'Sabe se relacionar com clientes',     disc:'Coaching',             df:0,dn:5, nc:30,cf:65},
+    {nome:'Define objetivos de forma SMART',     disc:'Max. Performance',    df:0,dn:3, nc:34,cf:63},
+    {nome:'Efetividade do Coaching',             disc:'Coaching',             df:1,dn:5, nc:31,cf:63},
+    {nome:'Promove trabalho em equipe',          disc:'Padrões Q&T',         df:0,dn:5, nc:30,cf:65},
+    {nome:'Fornece Coaching',                    disc:'Coaching',             df:0,dn:4, nc:35,cf:61},
+    {nome:'Intervém rápido e frequentemente',   disc:'Max. Performance',    df:0,dn:5, nc:34,cf:61},
+    {nome:'Efetividade do Ritmo de Gestão',      disc:'Ritmo de Gestão',     df:0,dn:5, nc:34,cf:61},
+    {nome:'Efetividade das Reuniões de Gestão',  disc:'Ritmo de Gestão',     df:0,dn:7, nc:36,cf:57},
+    {nome:'Faz acompanhamento detalhado',        disc:'Max. Performance',    df:0,dn:6, nc:37,cf:57},
+    {nome:'Consistência do Ritmo de Gestão',     disc:'Ritmo de Gestão',     df:1,dn:7, nc:44,cf:48},
+  ],
+  '90': [
+    {nome:'Compliance',                         disc:'Padrões Q&T',         df:0,dn:0, nc:8, cf:92},
+    {nome:'Advoga Aderência aos Processos',      disc:'Aderência',           df:0,dn:2, nc:26,cf:72},
+    {nome:'Compreende o Proc. Promocional',      disc:'Aderência',           df:0,dn:2, nc:28,cf:70},
+    {nome:'É um exemplo em valores',             disc:'Padrões Q&T',         df:1,dn:6, nc:27,cf:66},
+    {nome:'Define claramente não negociáveis',   disc:'Padrões Q&T',         df:0,dn:4, nc:33,cf:63},
+    {nome:'Liderando Mudanças (Digital)',         disc:'Padrões Q&T',         df:0,dn:3, nc:34,cf:63},
+    {nome:'Fomenta cultura de desenvolvimento', disc:'Coaching',             df:1,dn:9, nc:27,cf:63},
+    {nome:'Sabe se relacionar com clientes',     disc:'Coaching',             df:0,dn:6, nc:32,cf:62},
+    {nome:'Define objetivos de forma SMART',     disc:'Max. Performance',    df:0,dn:4, nc:36,cf:60},
+    {nome:'Efetividade do Coaching',             disc:'Coaching',             df:1,dn:6, nc:33,cf:60},
+    {nome:'Promove trabalho em equipe',          disc:'Padrões Q&T',         df:1,dn:6, nc:32,cf:61},
+    {nome:'Fornece Coaching',                    disc:'Coaching',             df:0,dn:5, nc:37,cf:58},
+    {nome:'Intervém rápido e frequentemente',   disc:'Max. Performance',    df:1,dn:6, nc:36,cf:57},
+    {nome:'Efetividade do Ritmo de Gestão',      disc:'Ritmo de Gestão',     df:0,dn:6, nc:36,cf:58},
+    {nome:'Efetividade das Reuniões de Gestão',  disc:'Ritmo de Gestão',     df:1,dn:8, nc:38,cf:53},
+    {nome:'Faz acompanhamento detalhado',        disc:'Max. Performance',    df:1,dn:7, nc:39,cf:53},
+    {nome:'Consistência do Ritmo de Gestão',     disc:'Ritmo de Gestão',     df:2,dn:8, nc:45,cf:45},
+  ],
+  '365': [
+    {nome:'Compliance',                         disc:'Padrões Q&T',         df:0,dn:0, nc:9, cf:91},
+    {nome:'Advoga Aderência aos Processos',      disc:'Aderência',           df:0,dn:3, nc:28,cf:69},
+    {nome:'Compreende o Proc. Promocional',      disc:'Aderência',           df:0,dn:3, nc:30,cf:67},
+    {nome:'É um exemplo em valores',             disc:'Padrões Q&T',         df:2,dn:7, nc:29,cf:62},
+    {nome:'Define claramente não negociáveis',   disc:'Padrões Q&T',         df:1,dn:5, nc:35,cf:59},
+    {nome:'Liderando Mudanças (Digital)',         disc:'Padrões Q&T',         df:0,dn:4, nc:36,cf:60},
+    {nome:'Fomenta cultura de desenvolvimento', disc:'Coaching',             df:2,dn:10,nc:29,cf:59},
+    {nome:'Sabe se relacionar com clientes',     disc:'Coaching',             df:1,dn:7, nc:34,cf:58},
+    {nome:'Define objetivos de forma SMART',     disc:'Max. Performance',    df:1,dn:5, nc:38,cf:56},
+    {nome:'Efetividade do Coaching',             disc:'Coaching',             df:2,dn:7, nc:35,cf:56},
+    {nome:'Promove trabalho em equipe',          disc:'Padrões Q&T',         df:2,dn:7, nc:34,cf:57},
+    {nome:'Fornece Coaching',                    disc:'Coaching',             df:1,dn:6, nc:39,cf:54},
+    {nome:'Intervém rápido e frequentemente',   disc:'Max. Performance',    df:2,dn:7, nc:38,cf:53},
+    {nome:'Efetividade do Ritmo de Gestão',      disc:'Ritmo de Gestão',     df:1,dn:7, nc:38,cf:54},
+    {nome:'Efetividade das Reuniões de Gestão',  disc:'Ritmo de Gestão',     df:2,dn:9, nc:40,cf:49},
+    {nome:'Faz acompanhamento detalhado',        disc:'Max. Performance',    df:2,dn:8, nc:41,cf:49},
+    {nome:'Consistência do Ritmo de Gestão',     disc:'Ritmo de Gestão',     df:3,dn:9, nc:46,cf:42},
+  ]
+};
+
+function renderTDSubcomp(periodo) {
+  const items = tdSubcompData[periodo];
+  const rows = items.map((item,i)=>{
+    const border = i<items.length-1?'border-bottom:1px solid var(--line);':'';
+    const neg = item.df + item.dn;
+    return `<div style="padding:12px 16px;${border}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div style="flex:1;margin-right:8px;"><div style="font-size:12px;font-weight:600;color:var(--ink);line-height:1.3;">${item.nome}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">${item.disc}</div></div>
+        <span style="font-size:12px;font-weight:700;color:var(--teal);flex-shrink:0;">${item.cf}% CF</span>
+      </div>
+      ${stackBar(item.df,item.dn,item.nc,item.cf)}
+      ${neg > 0 ? `<div style="margin-top:3px;"><span style="font-size:10px;color:#e8900a;">${neg}% discordância</span></div>` : ''}
+    </div>`;
+  }).join('');
+  document.getElementById('rel-panel-tdSubcomp').innerHTML = `<div style="padding:8px 20px 40px;display:flex;flex-direction:column;gap:12px;">${LEGEND_HTML}<div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">${rows}</div></div>`;
+}
+
+// ── NOTAS SLM ────────────────────────────────────────
+const notasSLMData = {
+  '30': [
+    {nome:'Marcelo Alves',        linha:'GNV Acesso HMO',  df:0, dn:5, nc:35, cf:60},
+    {nome:'Rafael Cunha',         linha:'GRs Cosentyx',    df:0, dn:6, nc:28, cf:66},
+    {nome:'Eduardo Rainer',       linha:'GNV Acesso Clin', df:0, dn:12,nc:22, cf:66},
+    {nome:'Elenise Colletti',     linha:'GNV Acesso Pub',  df:0, dn:8, nc:30, cf:62},
+    {nome:'Antonio Alex R.',      linha:'GRs Cosentyx',    df:0, dn:3, nc:38, cf:59},
+    {nome:'Leonardo Almeida',     linha:'GRs Cardio',      df:0, dn:10,nc:35, cf:55},
+    {nome:'Rafael Santos',        linha:'GRs Ofta',        df:0, dn:14,nc:22, cf:64},
+  ],
+  '90': [
+    {nome:'Marcelo Alves',        linha:'GNV Acesso HMO',  df:0, dn:6, nc:37, cf:57},
+    {nome:'Rafael Cunha',         linha:'GRs Cosentyx',    df:0, dn:7, nc:30, cf:63},
+    {nome:'Eduardo Rainer',       linha:'GNV Acesso Clin', df:1, dn:13,nc:24, cf:62},
+    {nome:'Elenise Colletti',     linha:'GNV Acesso Pub',  df:0, dn:9, nc:32, cf:59},
+    {nome:'Antonio Alex R.',      linha:'GRs Cosentyx',    df:1, dn:4, nc:40, cf:55},
+    {nome:'Leonardo Almeida',     linha:'GRs Cardio',      df:1, dn:11,nc:37, cf:51},
+    {nome:'Rafael Santos',        linha:'GRs Ofta',        df:1, dn:15,nc:24, cf:60},
+  ],
+  '365': [
+    {nome:'Marcelo Alves',        linha:'GNV Acesso HMO',  df:0, dn:7, nc:39, cf:54},
+    {nome:'Rafael Cunha',         linha:'GRs Cosentyx',    df:1, dn:8, nc:32, cf:59},
+    {nome:'Eduardo Rainer',       linha:'GNV Acesso Clin', df:1, dn:14,nc:26, cf:59},
+    {nome:'Elenise Colletti',     linha:'GNV Acesso Pub',  df:1, dn:10,nc:34, cf:55},
+    {nome:'Antonio Alex R.',      linha:'GRs Cosentyx',    df:1, dn:5, nc:42, cf:52},
+    {nome:'Leonardo Almeida',     linha:'GRs Cardio',      df:2, dn:12,nc:39, cf:47},
+    {nome:'Rafael Santos',        linha:'GRs Ofta',        df:2, dn:16,nc:26, cf:56},
+  ]
+};
+
+function renderNotasSLM(periodo) {
+  const people = notasSLMData[periodo];
+  const rows = people.map((p,i)=>{
+    const ini = p.nome.split(' ').slice(0,2).map(n=>n[0]).join('');
+    const border = i<people.length-1?'border-bottom:1px solid var(--line);':'';
+    const neg = p.df + p.dn;
+    const negLabel = neg > 0 ? `<span style="font-size:10px;color:#e8900a;">${neg}% discordância</span>` : '';
+    return `<div style="padding:12px 16px;${border}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="width:34px;height:34px;border-radius:17px;background:var(--teal-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:12px;font-weight:700;color:white;">${ini}</span></div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--ink);">${p.nome}</div><div style="font-size:11px;color:var(--muted);">${p.linha}</div></div>
+        <div style="font-size:13px;font-weight:700;color:var(--teal);">${p.cf}% CF</div>
+      </div>
+      ${stackBar(p.df,p.dn,p.nc,p.cf)}
+      <div style="display:flex;justify-content:space-between;margin-top:3px;">${negLabel}<span style="font-size:10px;color:var(--teal);margin-left:auto;">${p.nc}% NC</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('rel-panel-notasSLM').innerHTML = `<div style="padding:8px 20px 40px;display:flex;flex-direction:column;gap:12px;">${LEGEND_HTML}<div style="background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;">${rows}</div></div>`;
+}
+
+REL_RENDERS['notasFLM']  = renderNotasFLM;
+REL_RENDERS['td5disc']   = renderTD5disc;
+REL_RENDERS['tdSubcomp'] = renderTDSubcomp;
+REL_RENDERS['notasSLM']  = renderNotasSLM;
+
+// ── CRITÉRIOS DE AVALIAÇÃO ───────────────────────────
+const critValues = [3, 3, 3];
+
+function selectCrit(critId, value) {
+  critValues[critId] = value;
+  const styles = {
+    1: {bg:'#ffecec', border:'#d63031', text:'#d63031'},
+    2: {bg:'#fff4e5', border:'var(--warn)', text:'var(--warn)'},
+    3: {bg:'var(--teal-soft)', border:'var(--teal)', text:'var(--teal-dark)'},
+    4: {bg:'#eef1fd', border:'var(--navy)', text:'var(--navy)'}
+  };
+  document.getElementById(`crit-${critId}`).querySelectorAll('button').forEach((btn, i) => {
+    const v = i + 1;
+    if (v === value) {
+      btn.style.background = styles[v].bg;
+      btn.style.borderColor = styles[v].border;
+      btn.style.color = styles[v].text;
+    } else {
+      btn.style.background = 'white';
+      btn.style.borderColor = 'var(--line)';
+      btn.style.color = 'var(--muted)';
+    }
   });
-  el.style.background = 'var(--navy)';
-  el.style.color = 'white';
-  el.style.border = 'none';
-  el.style.fontWeight = '600';
-  renderRel(periodo);
 }
-
-function toggleDeptMenu() {
-  const m = document.getElementById('dept-menu');
-  m.style.display = m.style.display === 'none' ? 'block' : 'none';
-}
-
-function selectDept(el, name) {
-  document.getElementById('dept-label').textContent = name;
-  document.getElementById('dept-label').style.color = name === 'Todos' ? 'var(--muted)' : 'var(--navy)';
-  document.getElementById('dept-menu').style.display = 'none';
-}
-
-window.addEventListener('load', () => { renderRel('30'); });
 
 function updateNota(input) {
   const pct = ((parseFloat(input.value) - 0) / 10) * 100;
